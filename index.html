@@ -1,0 +1,2452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Dev Loop — Engineering Note 03 (Light) · Nexus by RTA Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ----- 1. RESET + ROOT ------------------------------------------ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:        #0c0a08;
+    --ink-2:      #15110c;
+    --ink-3:      #1f1a13;
+    --parchment:  #ebe1cf;
+    --parchment-2:#d8cdb8;
+    --ochre:      #8a7e6a;
+    --ochre-dim:  #5a5040;
+    --amber:      #ff7a1a;
+    --amber-dim:  #a3501a;
+    --amber-soft: rgba(255,122,26,0.12);
+    --rust:       #e34a1e;
+    --grid:       rgba(255, 242, 220, 0.035);
+    --display:    'Instrument Serif', 'Times New Roman', serif;
+    --body:       'Newsreader', Georgia, serif;
+    --mono:       'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--parchment);
+    font-family: var(--body);
+    font-weight: 380;
+    font-size: 19px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* ----- 2. BACKGROUND ATMOSPHERE --------------------------------- */
+  body::before {
+    /* engineering grid */
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 64px 64px;
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::after {
+    /* grain */
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.92  0 0 0 0 0.88  0 0 0 0 0.81  0 0 0 0.45 0'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ----- 3. PHASE PROGRESS BAR (top) ------------------------------ */
+  .phase-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--ink-3);
+    z-index: 50;
+  }
+  .phase-bar__fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--amber-dim), var(--amber));
+    transition: width 120ms linear;
+  }
+
+  /* ----- 4. LAYOUT WRAPPER ---------------------------------------- */
+  .wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  @media (max-width: 720px) {
+    .wrap { padding: 0 24px; }
+  }
+
+  /* ----- 5. MASTHEAD ---------------------------------------------- */
+  .masthead {
+    padding: 56px 0 28px;
+    border-bottom: 1px solid var(--ink-3);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .masthead__brand {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--parchment-2);
+  }
+  .masthead__brand b {
+    color: var(--amber);
+    font-weight: 500;
+  }
+  .masthead__nav {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ochre);
+  }
+  .masthead__nav span { color: var(--parchment-2); }
+
+  /* ----- 6. HERO -------------------------------------------------- */
+  .hero {
+    padding: 96px 0 48px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 36px;
+    position: relative;
+  }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--amber);
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .kicker::before {
+    content: "";
+    width: 36px;
+    height: 1px;
+    background: var(--amber);
+  }
+
+  .hero__title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(64px, 10vw, 142px);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--parchment);
+    margin: -8px 0 0;
+  }
+  .hero__title em {
+    font-style: italic;
+    color: var(--amber);
+    font-weight: 400;
+  }
+
+  .hero__sub {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: clamp(22px, 2.6vw, 32px);
+    line-height: 1.3;
+    color: var(--parchment-2);
+    max-width: 720px;
+    margin-top: 8px;
+  }
+
+  .hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    align-items: baseline;
+    padding-top: 24px;
+    border-top: 1px solid var(--ink-3);
+    margin-top: 12px;
+  }
+  .meta-item {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ochre);
+  }
+  .meta-item b {
+    color: var(--parchment);
+    font-weight: 500;
+    margin-left: 8px;
+  }
+
+  /* ----- 7. TOPOLOGY DIAGRAM (hero) ------------------------------- */
+  .topology {
+    margin: 64px 0 32px;
+    background: linear-gradient(180deg, var(--ink-2), var(--ink));
+    border: 1px solid var(--ink-3);
+    border-radius: 4px;
+    padding: 24px;
+    position: relative;
+  }
+  .topology__corner {
+    position: absolute;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ochre);
+  }
+  .topology__corner--tl { top: 14px; left: 16px; }
+  .topology__corner--tr { top: 14px; right: 16px; color: var(--amber); }
+  .topology__corner--bl { bottom: 14px; left: 16px; }
+  .topology__corner--br { bottom: 14px; right: 16px; }
+
+  .topology svg { width: 100%; height: auto; display: block; }
+
+  /* SVG draw-in animations */
+  @keyframes drawLine {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .draw {
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    animation: drawLine 2.4s cubic-bezier(.6,.05,.25,1) forwards;
+  }
+  .draw-1 { animation-delay: 0.4s; }
+  .draw-2 { animation-delay: 0.9s; }
+  .draw-3 { animation-delay: 1.4s; }
+  .draw-4 { animation-delay: 1.9s; }
+  .fade   { opacity: 0; transform: translateY(8px); animation: fadeIn 0.9s ease forwards; }
+  .fade-1 { animation-delay: 0.1s; }
+  .fade-2 { animation-delay: 0.3s; }
+  .fade-3 { animation-delay: 0.5s; }
+  .fade-4 { animation-delay: 2.2s; }
+  .fade-5 { animation-delay: 2.6s; }
+
+  /* ----- 8. ARTICLE BODY ------------------------------------------ */
+  .article {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 920px) 200px;
+    gap: 40px;
+    margin: 48px 0 96px;
+  }
+  @media (max-width: 1100px) {
+    .article {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .article__rail { display: none; }
+  }
+
+  /* Figure breakout — let large diagrams extend into the gutter
+     for better legibility, while keeping prose at body width. */
+  @media (min-width: 1101px) {
+    .article__body .phase-section,
+    .article__body .symmetry {
+      margin-left: -40px;
+      margin-right: -40px;
+    }
+  }
+
+  .article__rail {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ochre);
+    line-height: 1.7;
+  }
+  .article__rail--right { text-align: left; }
+  .rail-item { padding: 10px 0; border-top: 1px solid var(--ink-3); }
+  .rail-item:first-child { border-top: 0; padding-top: 0; }
+  .rail-item b { display: block; color: var(--parchment); font-weight: 500; letter-spacing: 0.1em; }
+
+  .article__body {
+    max-width: 920px;
+  }
+  /* Prose blocks stay narrower for comfortable reading; figures
+     are allowed to be wider. */
+  .article__body > p,
+  .article__body > .sec > p,
+  .article__body > .sec > h3,
+  .article__body > .pullquote,
+  .article__body > .sec > .pullquote {
+    max-width: 760px;
+  }
+
+  /* section headings */
+  .sec {
+    margin-top: 88px;
+    padding-top: 24px;
+    border-top: 1px solid var(--ink-3);
+  }
+  .sec:first-of-type { margin-top: 0; border-top: 0; padding-top: 0; }
+
+  .sec__num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
+    display: block;
+    margin-bottom: 16px;
+  }
+  .sec__head {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(38px, 5.2vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    color: var(--parchment);
+    margin-bottom: 28px;
+  }
+  .sec__head em { color: var(--amber); font-style: italic; }
+
+  .article p {
+    margin: 0 0 22px;
+    font-size: 19px;
+    line-height: 1.65;
+    color: var(--parchment);
+  }
+  .article p.lede {
+    font-size: 22px;
+    line-height: 1.55;
+    color: var(--parchment-2);
+  }
+  .article p.lede::first-letter {
+    font-family: var(--display);
+    color: var(--amber);
+    font-size: 6.5em;
+    line-height: 0.82;
+    float: left;
+    padding: 8px 14px 0 0;
+    font-weight: 400;
+  }
+
+  .article strong { color: var(--amber); font-weight: 500; }
+  .article em { color: var(--parchment-2); font-style: italic; }
+
+  .article code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    color: var(--parchment-2);
+    background: var(--ink-2);
+    padding: 1px 6px;
+    border-radius: 2px;
+    border: 1px solid var(--ink-3);
+  }
+
+  /* ----- 9. ROLE TABLE -------------------------------------------- */
+  .role-table {
+    margin: 32px 0;
+    border: 1px solid var(--ink-3);
+    background: var(--ink-2);
+  }
+  .role-row {
+    display: grid;
+    grid-template-columns: 1.1fr 0.7fr 1fr 1.3fr;
+    border-bottom: 1px solid var(--ink-3);
+    padding: 16px 20px;
+    align-items: start;
+    gap: 16px;
+  }
+  .role-row:last-child { border-bottom: 0; }
+  .role-row--head {
+    background: var(--ink);
+    padding: 12px 20px;
+  }
+  .role-row--head > div {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ochre);
+  }
+  .role-row__name {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--parchment);
+    line-height: 1.2;
+  }
+  .role-row__name code {
+    display: block;
+    font-style: normal;
+    font-size: 11px;
+    color: var(--amber);
+    margin-top: 4px;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    letter-spacing: 0.05em;
+  }
+  .role-row__tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--parchment-2);
+    padding-top: 4px;
+  }
+  .role-row__life,
+  .role-row__reward {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--parchment-2);
+    padding-top: 2px;
+  }
+  @media (max-width: 720px) {
+    .role-row, .role-row--head { grid-template-columns: 1fr; gap: 8px; }
+    .role-row--head { display: none; }
+    .role-row__name { font-size: 24px; }
+  }
+
+  /* ----- 10. FAILURE MODES GRID ----------------------------------- */
+  .failures {
+    margin: 32px 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 720px) { .failures { grid-template-columns: 1fr; } }
+  .failure {
+    border: 1px solid var(--ink-3);
+    background: var(--ink-2);
+    padding: 20px;
+    position: relative;
+  }
+  .failure__num {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--amber);
+    position: absolute;
+    top: 14px;
+    right: 16px;
+  }
+  .failure__title {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--parchment);
+    margin-bottom: 10px;
+    line-height: 1.2;
+    max-width: 80%;
+  }
+  .failure__body {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--parchment-2);
+  }
+
+  /* ----- 11. PHASE TIMELINE --------------------------------------- */
+  .phase-section {
+    margin: 40px 0;
+    border: 1px solid var(--ink-3);
+    background: var(--ink-2);
+    padding: 32px 28px 28px;
+  }
+  .phase-section__label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ochre);
+    margin-bottom: 24px;
+  }
+  .phase-section svg { width: 100%; height: auto; display: block; }
+
+  /* ----- 12. PATTERN TABLE (Claude resemblance) ------------------- */
+  .pattern-table {
+    margin: 32px 0;
+    border: 1px solid var(--ink-3);
+  }
+  .pattern-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--ink-3);
+  }
+  .pattern-row:last-child { border-bottom: 0; }
+  .pattern-row--head {
+    background: var(--ink);
+  }
+  .pattern-row--head > div {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
+    padding: 12px 18px;
+  }
+  .pattern-cell {
+    padding: 16px 18px;
+    font-size: 15.5px;
+    line-height: 1.5;
+    color: var(--parchment);
+  }
+  .pattern-cell:first-child {
+    background: var(--ink-2);
+    color: var(--parchment-2);
+    border-right: 1px solid var(--ink-3);
+  }
+  .pattern-cell b {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 17px;
+    color: var(--amber);
+    display: block;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 720px) {
+    .pattern-row { grid-template-columns: 1fr; }
+    .pattern-row--head { display: none; }
+    .pattern-cell:first-child { border-right: 0; border-bottom: 1px solid var(--ink-3); }
+  }
+
+  /* ----- 13. SYMMETRY DIAGRAM ------------------------------------- */
+  .symmetry {
+    margin: 40px 0;
+    border: 1px solid var(--ink-3);
+    background: var(--ink-2);
+    padding: 32px 24px;
+  }
+  .symmetry__label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ochre);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .symmetry svg { width: 100%; height: auto; display: block; }
+
+  /* ----- 14. CALLOUT ---------------------------------------------- */
+  .pullquote {
+    margin: 56px 0;
+    padding: 24px 0;
+    border-top: 1px solid var(--amber-dim);
+    border-bottom: 1px solid var(--amber-dim);
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 30px;
+    line-height: 1.32;
+    color: var(--parchment);
+  }
+  .pullquote::before {
+    content: "—";
+    color: var(--amber);
+    margin-right: 8px;
+  }
+
+  /* ----- 15. FOOTER ----------------------------------------------- */
+  .colophon {
+    border-top: 1px solid var(--ink-3);
+    padding: 48px 0 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ochre);
+  }
+  @media (max-width: 720px) { .colophon { grid-template-columns: 1fr; } }
+  .colophon b { color: var(--parchment); font-weight: 500; display: block; margin-bottom: 8px; }
+  .colophon p { font-family: var(--body); text-transform: none; letter-spacing: 0; font-size: 14px; color: var(--parchment-2); line-height: 1.55; }
+
+  /* ----- 16. SMALL UTIL ------------------------------------------- */
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid var(--amber-dim);
+    color: var(--amber);
+    border-radius: 999px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* ============================================================
+     LIGHT EDITION OVERRIDES
+     Only page chrome (body, headers, prose, rails) flips to cream.
+     Figure containers (.phase-section, .topology, .symmetry,
+     .role-table, .failures, .pattern-table) keep their original
+     dark palette — they read as editorial blocks on cream paper.
+     SVGs and HTML figure cards are untouched.
+     ============================================================ */
+
+  /* Light page palette */
+  :root {
+    --page:        #f5edd4;   /* warm cream paper */
+    --page-text:   #1c1408;   /* dark ink */
+    --page-text-2: #3a2f1e;   /* secondary brown */
+    --page-muted:  #705a3a;   /* muted brown */
+    --page-rule:   #d4c2a0;   /* warm tan rules */
+    --page-amber:  #c84a00;   /* deeper amber readable on cream */
+    --page-amber-d:#8a3500;
+  }
+
+  body {
+    background: var(--page);
+    color: var(--page-text);
+  }
+
+  /* Grid lines: dark warm on cream */
+  body::before {
+    background-image:
+      linear-gradient(rgba(80,50,20,0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(80,50,20,0.055) 1px, transparent 1px);
+  }
+
+  /* Grain: dark warm noise, multiply blend = ink-on-paper texture */
+  body::after {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.28  0 0 0 0 0.20  0 0 0 0 0.10  0 0 0 0.55 0'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.08;
+    mix-blend-mode: multiply;
+  }
+
+  /* Progress bar */
+  .phase-bar { background: var(--page-rule); }
+  .phase-bar__fill { background: linear-gradient(90deg, var(--page-amber-d), var(--page-amber)); }
+
+  /* Masthead */
+  .masthead { border-bottom-color: var(--page-rule); }
+  .masthead__brand { color: var(--page-text-2); }
+  .masthead__brand b { color: var(--page-amber); }
+  .masthead__nav { color: var(--page-muted); }
+  .masthead__nav span { color: var(--page-text); }
+  .masthead__nav a { color: var(--page-text) !important; }
+
+  /* Hero */
+  .kicker { color: var(--page-amber); }
+  .kicker::before { background: var(--page-amber); }
+  .hero__title { color: var(--page-text); }
+  .hero__title em { color: var(--page-amber); }
+  .hero__sub { color: var(--page-text-2); }
+  .hero__meta { border-top-color: var(--page-rule); }
+  .meta-item { color: var(--page-muted); }
+  .meta-item b { color: var(--page-text); }
+
+  /* Article rails (left + right) */
+  .article__rail { color: var(--page-muted); }
+  .rail-item { border-top-color: var(--page-rule); }
+  .rail-item b { color: var(--page-text); }
+  .article__rail a { color: var(--page-text-2) !important; }
+
+  /* Article body prose */
+  .article__body { color: var(--page-text); }
+  .article p { color: var(--page-text); }
+  .article p.lede { color: var(--page-text-2); }
+  .article p.lede::first-letter { color: var(--page-amber); }
+  .article strong { color: var(--page-amber); }
+  .article em { color: var(--page-text-2); }
+
+  /* Inline code on cream */
+  .article code {
+    color: var(--page-text-2);
+    background: #ede2c0;
+    border-color: var(--page-rule);
+  }
+
+  /* Section heads */
+  .sec { border-top-color: var(--page-rule); }
+  .sec__num { color: var(--page-amber); }
+  .sec__head { color: var(--page-text); }
+  .sec__head em { color: var(--page-amber); }
+
+  /* Subheads inside sections (h3 with display style) */
+  .article__body h3 { color: var(--page-text) !important; }
+  .article__body h3 span { color: var(--page-amber) !important; }
+
+  /* Pullquote on cream */
+  .pullquote {
+    color: var(--page-text);
+    border-color: var(--page-amber-d);
+  }
+  .pullquote::before { color: var(--page-amber); }
+
+  /* Colophon */
+  .colophon {
+    border-top-color: var(--page-rule);
+    color: var(--page-muted);
+  }
+  .colophon b { color: var(--page-text); }
+  .colophon p { color: var(--page-text-2); }
+
+  /* Article links (Tariq, Anthropic) inside prose */
+  .article a {
+    color: var(--page-amber) !important;
+    border-bottom-color: var(--page-amber-d) !important;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Scroll progress -->
+<div class="phase-bar"><div class="phase-bar__fill" id="phaseBar"></div></div>
+
+<div class="wrap">
+
+  <!-- ========== MASTHEAD ============================================ -->
+  <div class="masthead">
+    <div class="masthead__brand">RTA LABS &nbsp;·&nbsp; <b>NEXUS</b> &nbsp;/ ENGINEERING JOURNAL</div>
+    <div class="masthead__nav">Note <span>03</span> &nbsp;·&nbsp; Issue <span>2026.06.03</span></div>
+  </div>
+
+  <!-- ========== HERO ================================================ -->
+  <header class="hero">
+    <div class="kicker fade fade-1">FIELD NOTE — A SHIFT IN HOW WE BUILD SOFTWARE</div>
+    <h1 class="hero__title fade fade-2">The <em>Software</em><br/>Factory.</h1>
+    <p class="hero__sub fade fade-3">
+      From a single Claude terminal to a three-agent autonomous loop —
+      and what changes when AI stops being a productivity tool
+      and starts becoming a software engineer.
+    </p>
+
+    <div class="hero__meta">
+      <div class="meta-item">By <b>Sumedha Gamage</b></div>
+      <div class="meta-item">Filed <b>3 June 2026</b></div>
+      <div class="meta-item">Reading <b>30 min</b></div>
+      <div class="meta-item">Tags <b>agents · loops · factory · shift</b></div>
+    </div>
+  </header>
+
+  <!-- ========== HERO TOPOLOGY DIAGRAM =============================== -->
+  <figure class="topology">
+    <span class="topology__corner topology__corner--tl">FIG. 01 / TOPOLOGY</span>
+    <span class="topology__corner topology__corner--tr">FRESH SPAWN PER TASK</span>
+    <span class="topology__corner topology__corner--bl">∙ .claude/loop-state/</span>
+    <span class="topology__corner topology__corner--br">opus + sonnet × 2</span>
+
+    <svg viewBox="0 0 1200 520" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#ff7a1a" />
+        </marker>
+        <marker id="arrowDim" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#8a7e6a" />
+        </marker>
+        <pattern id="diag" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="6" stroke="#1f1a13" stroke-width="3" />
+        </pattern>
+      </defs>
+
+      <!-- background scaffolding -->
+      <rect x="40" y="60" width="1120" height="400" fill="none" stroke="#1f1a13" stroke-width="1" />
+      <text x="44" y="56" font-family="JetBrains Mono" font-size="10" fill="#5a5040" letter-spacing="2">BOUNDARY · LOOP-STATE FILESYSTEM</text>
+
+      <!-- Lead node (center top) -->
+      <g class="fade fade-4">
+        <circle cx="600" cy="160" r="78" fill="#15110c" stroke="#ff7a1a" stroke-width="1.5"/>
+        <circle cx="600" cy="160" r="92" fill="none" stroke="#ff7a1a" stroke-width="0.6" stroke-dasharray="2 4"/>
+        <text x="600" y="156" text-anchor="middle" font-family="Instrument Serif" font-size="34" fill="#ebe1cf" font-style="italic">Lead</text>
+        <text x="600" y="180" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a" letter-spacing="2">OPUS · LONG-RUNNING</text>
+        <text x="600" y="48" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="3">ORCHESTRATOR</text>
+      </g>
+
+      <!-- Generator node (bottom-left) -->
+      <g class="fade fade-4" style="animation-delay: 2.4s;">
+        <circle cx="240" cy="380" r="64" fill="#15110c" stroke="#ebe1cf" stroke-width="1.2"/>
+        <text x="240" y="378" text-anchor="middle" font-family="Instrument Serif" font-size="26" fill="#ebe1cf" font-style="italic">Generator</text>
+        <text x="240" y="400" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#8a7e6a" letter-spacing="2">SONNET · DIES ON DONE</text>
+        <text x="240" y="476" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a" letter-spacing="2">BUILDER</text>
+      </g>
+
+      <!-- Validator node (bottom-right) -->
+      <g class="fade fade-4" style="animation-delay: 2.6s;">
+        <circle cx="960" cy="380" r="64" fill="#15110c" stroke="#ebe1cf" stroke-width="1.2"/>
+        <text x="960" y="378" text-anchor="middle" font-family="Instrument Serif" font-size="26" fill="#ebe1cf" font-style="italic">Validator</text>
+        <text x="960" y="400" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#8a7e6a" letter-spacing="2">SONNET · DIES ON VERDICT</text>
+        <text x="960" y="476" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#e34a1e" letter-spacing="2">CRITIC</text>
+      </g>
+
+      <!-- Spawn arrow: Lead -> Generator -->
+      <path class="draw draw-1" d="M 538 215 Q 380 270 295 332" fill="none" stroke="#ff7a1a" stroke-width="1.4" marker-end="url(#arrow)"/>
+      <text x="370" y="262" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2" class="fade fade-5">SPAWN · current-task.md</text>
+
+      <!-- Return arrow: Generator -> Lead -->
+      <path class="draw draw-2" d="M 290 330 Q 460 270 552 205" fill="none" stroke="#8a7e6a" stroke-width="1" stroke-dasharray="3 4" marker-end="url(#arrowDim)"/>
+      <text x="395" y="312" font-family="JetBrains Mono" font-size="9.5" fill="#8a7e6a" letter-spacing="2" class="fade fade-5">RETURN · generator-report.md</text>
+
+      <!-- Spawn arrow: Lead -> Validator -->
+      <path class="draw draw-3" d="M 662 215 Q 820 270 905 332" fill="none" stroke="#ff7a1a" stroke-width="1.4" marker-end="url(#arrow)"/>
+      <text x="700" y="262" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2" class="fade fade-5">SPAWN · validate</text>
+
+      <!-- Return arrow: Validator -> Lead -->
+      <path class="draw draw-4" d="M 910 330 Q 760 270 648 205" fill="none" stroke="#8a7e6a" stroke-width="1" stroke-dasharray="3 4" marker-end="url(#arrowDim)"/>
+      <text x="745" y="312" font-family="JetBrains Mono" font-size="9.5" fill="#8a7e6a" letter-spacing="2" class="fade fade-5">VERDICT · pass / fail + evidence</text>
+
+      <!-- Between Generator and Validator -->
+      <line x1="306" y1="380" x2="896" y2="380" stroke="#1f1a13" stroke-width="1" stroke-dasharray="2 6"/>
+      <text x="600" y="378" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="3" style="background: #0c0a08;">
+        <tspan dx="0" dy="-3" fill="#0c0a08">█████████████</tspan>
+      </text>
+      <rect x="540" y="370" width="120" height="20" fill="#15110c"/>
+      <text x="600" y="384" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="3">NO DIRECT CHANNEL</text>
+
+      <!-- Side annotations -->
+      <text x="60" y="100" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ PLAN-NEGOTIATE × 5 max</text>
+      <text x="60" y="118" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ BUDGET enforced</text>
+      <text x="60" y="136" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ DIFF-CHECK boundary</text>
+
+      <text x="1010" y="100" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">FALSE-PASS = 10× ∙</text>
+      <text x="1010" y="118" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">DDB · KG · LOGS ∙</text>
+      <text x="1010" y="136" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">PLAYWRIGHT + MCP ∙</text>
+    </svg>
+  </figure>
+
+  <!-- ========== ARTICLE BODY ======================================== -->
+  <main class="article">
+
+    <!-- LEFT RAIL -->
+    <aside class="article__rail">
+      <div class="rail-item">
+        <b>Contents</b>
+        <a href="#journey" style="color:var(--parchment-2); text-decoration:none; display:block;">01 · Terminal → factory</a>
+        <a href="#what" style="color:var(--parchment-2); text-decoration:none; display:block;">02 · Architecture</a>
+        <a href="#why" style="color:var(--parchment-2); text-decoration:none; display:block;">03 · Motivation</a>
+        <a href="#how" style="color:var(--parchment-2); text-decoration:none; display:block;">04 · Mechanics</a>
+        <a href="#substrate" style="color:var(--parchment-2); text-decoration:none; display:block;">05 · Substrate</a>
+        <a href="#forcing" style="color:var(--parchment-2); text-decoration:none; display:block;">06 · Forcing functions</a>
+        <a href="#claude" style="color:var(--parchment-2); text-decoration:none; display:block;">07 · Claude lineage</a>
+        <a href="#rules" style="color:var(--parchment-2); text-decoration:none; display:block;">08 · Rules</a>
+        <a href="#trust" style="color:var(--parchment-2); text-decoration:none; display:block;">09 · Trust</a>
+        <a href="#workstation" style="color:var(--parchment-2); text-decoration:none; display:block;">10 · Workstation</a>
+        <a href="#deeper" style="color:var(--parchment-2); text-decoration:none; display:block;">11 · The symmetry</a>
+      </div>
+      <div class="rail-item">
+        <b>Workstation</b>
+        Remote Mac mini<br/>Tailscale mesh · tmux<br/>up 47 days · never sleeps
+      </div>
+      <div class="rail-item">
+        <b>Voice surface</b>
+        Whisperflow dictation<br/>keyboard is the exception<br/>not the rule
+      </div>
+      <div class="rail-item">
+        <b>Trust posture</b>
+        Tier 4 access<br/>real AWS · real deploys<br/>real audit · bounded scope
+      </div>
+      <div class="rail-item">
+        <b>Rulebook layers</b>
+        CLAUDE.md root<br/>15 keystone ADRs<br/>shared references<br/>per-service rules<br/>loop self-charter
+      </div>
+      <div class="rail-item">
+        <b>Status</b>
+        Operational on every<br/>build session.
+      </div>
+      <div class="rail-item">
+        <b>Source</b>
+        .claude/agents/<br/>dev-loop-*.md
+      </div>
+    </aside>
+
+    <!-- MAIN BODY -->
+    <div class="article__body">
+
+      <p class="lede">
+        The shift is not subtle. AI coding agents were sold to us as productivity tools — a sharper autocomplete, a faster rubber duck. What we have built instead is a software factory: a self-running, self-correcting build cycle in which the agents are not assistants but engineers, and the humans are not operators but architects.
+      </p>
+
+      <p>
+        How we got here is a story of five stages, each one expanding what it meant for an agent to do work. The dev loop — the autonomous three-agent cycle running inside this repo today — is the current frontier of that arc, and the resemblance to Claude's own design language is not a coincidence.
+      </p>
+
+      <!-- ===== Section 01 — THE JOURNEY ===== -->
+      <section class="sec" id="journey">
+        <span class="sec__num">§ 01 — Lineage of practice</span>
+        <h2 class="sec__head">From <em>terminal</em> to factory.</h2>
+
+        <p>
+          Five stages. Each one is a real configuration we ran. The progression is not an idea — it is what a small founding team actually does when it tries to make AI coding agents do load-bearing work.
+        </p>
+
+        <!-- 5-STAGE JOURNEY DIAGRAM -->
+        <div class="phase-section" style="padding: 36px 24px 32px;">
+          <div class="phase-section__label">FIG. 02 / FIVE STAGES — PAIR PROGRAMMER → SOFTWARE FACTORY</div>
+          <svg viewBox="0 0 1200 440" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <marker id="arrowJ" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#ff7a1a" />
+              </marker>
+            </defs>
+
+            <!-- spine -->
+            <line x1="70" y1="240" x2="1130" y2="240" stroke="#1f1a13" stroke-width="1"/>
+            <line x1="70" y1="240" x2="1130" y2="240" stroke="#a3501a" stroke-width="1.2" stroke-dasharray="4 8" marker-end="url(#arrowJ)"/>
+
+            <!-- ============ STAGE 1: SINGLE TERMINAL ============ -->
+            <g transform="translate(140, 240)">
+              <!-- Stage indicator -->
+              <circle cx="0" cy="0" r="12" fill="#0c0a08" stroke="#8a7e6a" stroke-width="1.2"/>
+              <text x="0" y="4" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">01</text>
+
+              <!-- Icon: a single terminal window ABOVE the line -->
+              <g transform="translate(-55, -150)">
+                <rect x="0" y="0" width="110" height="74" fill="#15110c" stroke="#8a7e6a" stroke-width="1"/>
+                <rect x="0" y="0" width="110" height="14" fill="#1f1a13"/>
+                <circle cx="8"  cy="7" r="2" fill="#5a5040"/>
+                <circle cx="16" cy="7" r="2" fill="#5a5040"/>
+                <circle cx="24" cy="7" r="2" fill="#5a5040"/>
+                <text x="10" y="35" font-family="JetBrains Mono" font-size="11" fill="#ebe1cf">$ claude</text>
+                <text x="10" y="52" font-family="JetBrains Mono" font-size="11" fill="#8a7e6a">&gt; explain this</text>
+                <rect x="78" y="59" width="7" height="2" fill="#ff7a1a"/>
+              </g>
+
+              <!-- Labels BELOW -->
+              <text x="0" y="38" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a" letter-spacing="2">SINGLE TERMINAL</text>
+              <text x="0" y="68" text-anchor="middle" font-family="Instrument Serif" font-size="24" fill="#ebe1cf" font-style="italic">Pair programmer</text>
+              <text x="0" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="1">one human ↔ one agent</text>
+              <text x="0" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="1">faster typing, same loop</text>
+            </g>
+
+            <!-- ============ STAGE 2: TMUX PANES ============ -->
+            <g transform="translate(370, 240)">
+              <circle cx="0" cy="0" r="12" fill="#0c0a08" stroke="#8a7e6a" stroke-width="1.2"/>
+              <text x="0" y="4" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">02</text>
+
+              <!-- Icon: 2x2 tmux grid -->
+              <g transform="translate(-55, -150)">
+                <rect x="0"  y="0"  width="52" height="34" fill="#15110c" stroke="#8a7e6a"/>
+                <rect x="58" y="0"  width="52" height="34" fill="#15110c" stroke="#8a7e6a"/>
+                <rect x="0"  y="40" width="52" height="34" fill="#15110c" stroke="#8a7e6a"/>
+                <rect x="58" y="40" width="52" height="34" fill="#15110c" stroke="#8a7e6a"/>
+                <text x="6"  y="14" font-family="JetBrains Mono" font-size="8" fill="#ebe1cf">⟩</text>
+                <text x="64" y="14" font-family="JetBrains Mono" font-size="8" fill="#ebe1cf">⟩</text>
+                <text x="6"  y="54" font-family="JetBrains Mono" font-size="8" fill="#ebe1cf">⟩</text>
+                <text x="64" y="54" font-family="JetBrains Mono" font-size="8" fill="#ebe1cf">⟩</text>
+                <text x="14" y="14" font-family="JetBrains Mono" font-size="8" fill="#8a7e6a">claude</text>
+                <text x="72" y="14" font-family="JetBrains Mono" font-size="8" fill="#8a7e6a">claude</text>
+                <text x="14" y="54" font-family="JetBrains Mono" font-size="8" fill="#8a7e6a">claude</text>
+                <text x="72" y="54" font-family="JetBrains Mono" font-size="8" fill="#8a7e6a">claude</text>
+              </g>
+
+              <text x="0" y="38" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a" letter-spacing="2">TMUX PANES</text>
+              <text x="0" y="68" text-anchor="middle" font-family="Instrument Serif" font-size="24" fill="#ebe1cf" font-style="italic">Workshop</text>
+              <text x="0" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="1">n sessions in parallel</text>
+              <text x="0" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="1">attention is the bottleneck</text>
+            </g>
+
+            <!-- ============ STAGE 3: SENDKEYS ============ -->
+            <g transform="translate(600, 240)">
+              <circle cx="0" cy="0" r="12" fill="#0c0a08" stroke="#a3501a" stroke-width="1.4"/>
+              <text x="0" y="4" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#a3501a">03</text>
+
+              <!-- Icon: two panes with arrow between -->
+              <g transform="translate(-55, -150)">
+                <rect x="0"  y="20" width="44" height="40" fill="#15110c" stroke="#a3501a"/>
+                <rect x="66" y="20" width="44" height="40" fill="#15110c" stroke="#a3501a"/>
+                <text x="6"  y="36" font-family="JetBrains Mono" font-size="8" fill="#ebe1cf">claude A</text>
+                <text x="72" y="36" font-family="JetBrains Mono" font-size="8" fill="#ebe1cf">claude B</text>
+                <path d="M 44 40 Q 55 4 66 40" fill="none" stroke="#ff7a1a" stroke-width="1" marker-end="url(#arrowJ)"/>
+                <text x="55" y="14" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#ff7a1a" letter-spacing="1">send-keys</text>
+              </g>
+
+              <text x="0" y="38" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#a3501a" letter-spacing="2">TMUX SEND-KEYS</text>
+              <text x="0" y="68" text-anchor="middle" font-family="Instrument Serif" font-size="24" fill="#ebe1cf" font-style="italic">The wire</text>
+              <text x="0" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="1">sessions message sessions</text>
+              <text x="0" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="1">crude nervous system</text>
+            </g>
+
+            <!-- ============ STAGE 4: AGENT TEAMS ============ -->
+            <g transform="translate(830, 240)">
+              <circle cx="0" cy="0" r="13" fill="#0c0a08" stroke="#ff7a1a" stroke-width="1.5"/>
+              <text x="0" y="4" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a">04</text>
+
+              <!-- Icon: hierarchy tree -->
+              <g transform="translate(-55, -150)">
+                <!-- root -->
+                <rect x="44" y="6"  width="22" height="14" fill="#15110c" stroke="#ff7a1a"/>
+                <text x="55" y="16" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#ff7a1a">lead</text>
+                <!-- branches -->
+                <line x1="55" y1="20" x2="20"  y2="42" stroke="#ff7a1a" stroke-width="0.8"/>
+                <line x1="55" y1="20" x2="55"  y2="42" stroke="#ff7a1a" stroke-width="0.8"/>
+                <line x1="55" y1="20" x2="90"  y2="42" stroke="#ff7a1a" stroke-width="0.8"/>
+                <!-- children -->
+                <rect x="6"   y="44" width="28" height="14" fill="#15110c" stroke="#ebe1cf"/>
+                <rect x="41"  y="44" width="28" height="14" fill="#15110c" stroke="#ebe1cf"/>
+                <rect x="76"  y="44" width="28" height="14" fill="#15110c" stroke="#ebe1cf"/>
+                <text x="20" y="54" text-anchor="middle" font-family="JetBrains Mono" font-size="6" fill="#ebe1cf">arch</text>
+                <text x="55" y="54" text-anchor="middle" font-family="JetBrains Mono" font-size="6" fill="#ebe1cf">dev</text>
+                <text x="90" y="54" text-anchor="middle" font-family="JetBrains Mono" font-size="6" fill="#ebe1cf">qa</text>
+              </g>
+
+              <text x="0" y="38" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">CLAUDE AGENT TEAMS</text>
+              <text x="0" y="68" text-anchor="middle" font-family="Instrument Serif" font-size="24" fill="#ebe1cf" font-style="italic">Org chart</text>
+              <text x="0" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="1">addressable + scoped roles</text>
+              <text x="0" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="1">SendMessage replaces send-keys</text>
+            </g>
+
+            <!-- ============ STAGE 5: THE LOOP / FACTORY ============ -->
+            <g transform="translate(1060, 240)">
+              <circle cx="0" cy="0" r="14" fill="#ff7a1a" stroke="#ff7a1a" stroke-width="1.5"/>
+              <text x="0" y="4" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#0c0a08" font-weight="500">05</text>
+
+              <!-- Icon: triangular loop with 3 nodes -->
+              <g transform="translate(-55, -150)">
+                <!-- Triangle of 3 nodes -->
+                <circle cx="55" cy="10" r="10" fill="#15110c" stroke="#ff7a1a" stroke-width="1.2"/>
+                <circle cx="22" cy="60" r="9"  fill="#15110c" stroke="#ebe1cf" stroke-width="1"/>
+                <circle cx="88" cy="60" r="9"  fill="#15110c" stroke="#ebe1cf" stroke-width="1"/>
+                <text x="55" y="13" text-anchor="middle" font-family="JetBrains Mono" font-size="6.5" fill="#ff7a1a">L</text>
+                <text x="22" y="63" text-anchor="middle" font-family="JetBrains Mono" font-size="6.5" fill="#ebe1cf">G</text>
+                <text x="88" y="63" text-anchor="middle" font-family="JetBrains Mono" font-size="6.5" fill="#ebe1cf">V</text>
+                <!-- arrows around the triangle -->
+                <path d="M 47 18 Q 35 38 25 52" fill="none" stroke="#ff7a1a" stroke-width="0.9" marker-end="url(#arrowJ)"/>
+                <path d="M 63 18 Q 75 38 85 52" fill="none" stroke="#ff7a1a" stroke-width="0.9" marker-end="url(#arrowJ)"/>
+                <path d="M 30 64 Q 55 76 80 64" fill="none" stroke="#ff7a1a" stroke-width="0.9" stroke-dasharray="2 3"/>
+              </g>
+
+              <text x="0" y="38" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">AUTONOMOUS DEV LOOP</text>
+              <text x="0" y="68" text-anchor="middle" font-family="Instrument Serif" font-size="24" fill="#ebe1cf" font-style="italic">Factory</text>
+              <text x="0" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#ff7a1a" letter-spacing="1">three roles, fresh each task</text>
+              <text x="0" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#ff7a1a" letter-spacing="1">runs without an operator</text>
+            </g>
+
+            <!-- Top banner: where the shift happens -->
+            <text x="600" y="22" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#5a5040" letter-spacing="3">— PRODUCTIVITY TOOL —————————————————————————————————— SOFTWARE ENGINEER —</text>
+            <line x1="70"  y1="32" x2="600"  y2="32" stroke="#5a5040" stroke-width="0.5" stroke-dasharray="2 4"/>
+            <line x1="600" y1="32" x2="1130" y2="32" stroke="#ff7a1a" stroke-width="0.7" stroke-dasharray="2 4"/>
+
+            <!-- Bottom: human posture changes -->
+            <text x="140" y="400" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="1">HUMAN: operator</text>
+            <text x="370" y="400" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="1">HUMAN: conductor</text>
+            <text x="600" y="400" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a3501a" letter-spacing="1">HUMAN: broker</text>
+            <text x="830" y="400" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#ff7a1a" letter-spacing="1">HUMAN: manager</text>
+            <text x="1060" y="400" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#ff7a1a" letter-spacing="1">HUMAN: architect</text>
+            <line x1="70" y1="410" x2="1130" y2="410" stroke="#1f1a13" stroke-width="1"/>
+            <text x="600" y="430" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="3">— EACH STAGE FREES MORE HUMAN ATTENTION —</text>
+          </svg>
+        </div>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 48px 0 8px; line-height: 1.2;">
+          01 · The pair programmer
+        </h3>
+        <p>
+          A single terminal. One developer, one Claude session. You ask, it answers. The agent is a tool — a better grep, a faster typist, a sharper rubber duck. Productivity goes up. The development model does not change. The human is still inside every iteration of the build cycle, because there is no build cycle yet — only a conversation.
+        </p>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
+          02 · The workshop
+        </h3>
+        <p>
+          tmux. Four panes, four Claude sessions, four threads of work in flight. You context-switch between them, dispatching one task here, reading a report there. Each session is still a pair-programming session — you are just running four of them in parallel. The bottleneck has moved from <em>"Claude's typing speed"</em> to <em>"your attention."</em> Real, but not transformative.
+        </p>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
+          03 · The wire
+        </h3>
+        <p>
+          tmux can pipe a keystroke from one pane into another. <code>tmux send-keys -t pane-B "&lt;message&gt;" Enter</code>. Suddenly the sessions can talk — programmatically — and a small operator script can broker the conversation. You step out of the loop for short stretches. The agents do not <em>know</em> they are talking to each other, but you have built a crude nervous system between them. This is the first stage where work happens without you watching every keystroke.
+        </p>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
+          04 · The org chart
+        </h3>
+        <p>
+          Claude agent teams. Formal multi-agent orchestration with shared task lists, addressable teammates, scoped permissions, lifecycle events. The lead and the specialists now <em>know</em> they are a team. <code>SendMessage</code> replaces the send-keys hack. The operator script becomes structure. This is where the org chart shows up in software — a chief architect with seven specialists, a VP of engineering with six team leads, each lead with their own developers. The team metaphor stops being a metaphor.
+        </p>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
+          05 · The factory
+        </h3>
+        <p>
+          The autonomous dev loop. <strong>Lead, Generator, Validator</strong> — fresh context windows, asymmetric reward functions, hard scope boundaries, plan-negotiation rounds, persistence-layer verdicts, post-task diff checks. The human steps out of the build cycle entirely for hours at a time. The agents are not assistants. They are engineers. The factory has a substrate too — a remote machine over <strong>Tailscale</strong>, with the loop pinned inside a long-lived <code>tmux</code> session. I close my laptop. I get on a plane. The loop keeps running. Validator FAILs catch their own bugs. The Lead writes the next task. By the time I land, three features have progressed two iterations each, and the only thing waiting for me is taste calls — the inflection points that actually require a human.
+        </p>
+
+        <p class="pullquote" style="margin: 40px 0;">
+          The agents code while I travel. That sentence used to be a joke. It is now the operating posture.
+        </p>
+      </section>
+
+      <!-- ===== Section 02 ===== -->
+      <section class="sec" id="what">
+        <span class="sec__num">§ 02 — Architecture</span>
+        <h2 class="sec__head">Inside the <em>factory</em>.</h2>
+
+        <p>
+          The dev loop is the automated development cycle we run inside this repo to ship features into Nexus. Three roles, each with a single reward function, each with a strictly bounded scope. The entire state lives on disk under <code>.claude/loop-state/</code> — <code>plan.md</code>, <code>plan-approved.md</code>, <code>current-task.md</code>, <code>manifest.json</code>, generator reports, history. Nothing is implicit. A loop is resumable, observable, and auditable.
+        </p>
+
+        <div class="role-table">
+          <div class="role-row role-row--head">
+            <div>Role</div>
+            <div>Model</div>
+            <div>Lifetime</div>
+            <div>Reward Function</div>
+          </div>
+          <div class="role-row">
+            <div class="role-row__name">Lead<code>dev-loop-lead</code></div>
+            <div class="role-row__tag">Opus</div>
+            <div class="role-row__life">Long-running.<br/>One per feature.</div>
+            <div class="role-row__reward">End-to-end feature delivery inside the agreed wall-clock budget.</div>
+          </div>
+          <div class="role-row">
+            <div class="role-row__name">Generator<code>dev-loop-generator</code></div>
+            <div class="role-row__tag">Sonnet</div>
+            <div class="role-row__life">Fresh per task.<br/>Dies on completion.</div>
+            <div class="role-row__reward">First-try code that compiles, lints, types, and tests clean. Zero shortcuts.</div>
+          </div>
+          <div class="role-row">
+            <div class="role-row__name">Validator<code>dev-loop-validator</code></div>
+            <div class="role-row__tag">Sonnet</div>
+            <div class="role-row__life">Fresh per validation.<br/>Dies on verdict.</div>
+            <div class="role-row__reward">Find real failures. False <span style="color:var(--amber)">PASS</span> is penalized 10× over false <span style="color:var(--rust)">FAIL</span>.</div>
+          </div>
+          <div class="role-row">
+            <div class="role-row__name">E2E Validator<code>dev-loop-e2e-validator</code></div>
+            <div class="role-row__tag">Sonnet</div>
+            <div class="role-row__life">Fresh per run.<br/>Browser-driven.</div>
+            <div class="role-row__reward">Reproduce the failing user journey in a real browser, with evidence.</div>
+          </div>
+        </div>
+
+        <p>
+          The Lead is the only long-running session. The others are spawned fresh — clean context windows, no memory of prior iterations — and they exit when the task is done. This is the load-bearing structural choice.
+        </p>
+      </section>
+
+      <!-- ===== Section 02 ===== -->
+      <section class="sec" id="why">
+        <span class="sec__num">§ 03 — Motivation</span>
+        <h2 class="sec__head">Why we <em>built</em> it.</h2>
+
+        <p>
+          The dev loop solves four failure modes we kept hitting with ad-hoc agent use. Each one looks small in isolation; together they compound into the difference between a platform that ships and a platform that decays.
+        </p>
+
+        <div class="failures">
+          <div class="failure">
+            <div class="failure__num">F · 01</div>
+            <div class="failure__title">Plan drift.</div>
+            <div class="failure__body">Single agents wander mid-implementation because nothing is checking the plan against reality. We answer with <b style="color:var(--amber)">up to five Lead⇄Validator plan-negotiation rounds</b> before a single line of application code is written. Cheap critique catches expensive bugs.</div>
+          </div>
+          <div class="failure">
+            <div class="failure__num">F · 02</div>
+            <div class="failure__title">Context pollution.</div>
+            <div class="failure__body">A long-running coding agent accumulates wrong assumptions across iterations. Our Generator and Validator are <b style="color:var(--amber)">spawned fresh every task</b>. They read the task file, do the work, and die. No defensive hedging against bugs that no longer exist.</div>
+          </div>
+          <div class="failure">
+            <div class="failure__num">F · 03</div>
+            <div class="failure__title">UI-only verdicts.</div>
+            <div class="failure__body">A bubble that looks right on screen can be backed by an empty DynamoDB row. Validator policy is non-negotiable: every verdict cross-references <b style="color:var(--amber)">DDB, Aurora pgvector, Neptune, and CloudWatch</b>. UI evidence alone is rejected.</div>
+          </div>
+          <div class="failure">
+            <div class="failure__num">F · 04</div>
+            <div class="failure__title">The Lead "just fixing it."</div>
+            <div class="failure__body">The most expensive failure in agentic dev is the orchestrator giving up on delegation and editing code itself. The Lead is locked out of every path outside <code>.claude/loop-state/</code> by a post-task <code>git diff</code> check. Encroachment fails the loop with reason <b style="color:var(--rust)">LEAD_ENCROACHMENT</b>.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Section 03 ===== -->
+      <section class="sec" id="how">
+        <span class="sec__num">§ 04 — Mechanics</span>
+        <h2 class="sec__head">How it <em>accelerates</em>.</h2>
+
+        <p>
+          Acceleration is not raw throughput. It is compounding small disciplines. Five phases run on every feature, in order, with hard gates between each.
+        </p>
+
+        <div class="phase-section">
+          <div class="phase-section__label">FIG. 03 / FIVE-PHASE EXECUTION TIMELINE</div>
+          <svg viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#ff7a1a" />
+              </marker>
+            </defs>
+
+            <!-- horizontal flow line -->
+            <line x1="80" y1="160" x2="1120" y2="160" stroke="#1f1a13" stroke-width="1" />
+            <line x1="80" y1="160" x2="1120" y2="160" stroke="#ff7a1a" stroke-width="1.5" stroke-dasharray="4 8" marker-end="url(#arrow2)" />
+
+            <!-- 5 phases -->
+            <!-- Phase 0 -->
+            <g>
+              <circle cx="140" cy="160" r="14" fill="#0c0a08" stroke="#ff7a1a" stroke-width="1.5"/>
+              <text x="140" y="164" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="500" fill="#ff7a1a">0</text>
+              <text x="140" y="110" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">PHASE 0</text>
+              <text x="140" y="88" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#ebe1cf" font-style="italic">Session start</text>
+              <text x="140" y="210" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8a7e6a">make down · up · seed · health</text>
+              <text x="140" y="226" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8a7e6a">verify mock=false, api=local</text>
+              <text x="140" y="252" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="2">HALT IF RED</text>
+            </g>
+
+            <!-- Phase 1 -->
+            <g>
+              <circle cx="340" cy="160" r="14" fill="#0c0a08" stroke="#ff7a1a" stroke-width="1.5"/>
+              <text x="340" y="164" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="500" fill="#ff7a1a">1</text>
+              <text x="340" y="110" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">PHASE 1</text>
+              <text x="340" y="88" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#ebe1cf" font-style="italic">Plan-negotiate</text>
+              <text x="340" y="210" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8a7e6a">5 rounds max · TDD RED verified</text>
+              <text x="340" y="226" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8a7e6a">.feature + step defs written first</text>
+              <text x="340" y="252" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="2">PLAN-APPROVED</text>
+            </g>
+
+            <!-- Phase 2 -->
+            <g>
+              <circle cx="540" cy="160" r="14" fill="#0c0a08" stroke="#ff7a1a" stroke-width="1.5"/>
+              <text x="540" y="164" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="500" fill="#ff7a1a">2</text>
+              <text x="540" y="110" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">PHASE 2</text>
+              <text x="540" y="88" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#ebe1cf" font-style="italic">Build</text>
+              <text x="540" y="210" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8a7e6a">fresh Generator per task</text>
+              <text x="540" y="226" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8a7e6a">lint · type · unit local</text>
+              <text x="540" y="252" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="2">REPORT</text>
+            </g>
+
+            <!-- Phase 3 -->
+            <g>
+              <circle cx="740" cy="160" r="14" fill="#0c0a08" stroke="#ff7a1a" stroke-width="1.5"/>
+              <text x="740" y="164" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="500" fill="#ff7a1a">3</text>
+              <text x="740" y="110" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">PHASE 3</text>
+              <text x="740" y="88" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#ebe1cf" font-style="italic">Validate</text>
+              <text x="740" y="210" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8a7e6a">headless playwright → live MCP</text>
+              <text x="740" y="226" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8a7e6a">LLM-as-judge on agent evals</text>
+              <text x="740" y="252" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="2">EVIDENCE PER LAYER</text>
+            </g>
+
+            <!-- Phase 4 -->
+            <g>
+              <circle cx="940" cy="160" r="14" fill="#0c0a08" stroke="#ff7a1a" stroke-width="1.5"/>
+              <text x="940" y="164" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="500" fill="#ff7a1a">4</text>
+              <text x="940" y="110" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">PHASE 4</text>
+              <text x="940" y="88" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#ebe1cf" font-style="italic">Re-plan</text>
+              <text x="940" y="210" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8a7e6a">Lead writes a debug task</text>
+              <text x="940" y="226" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8a7e6a">never edits code itself</text>
+              <text x="940" y="252" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="2">LOOP</text>
+            </g>
+
+            <!-- loop back arrow from 4 to 2 -->
+            <path d="M 940 178 Q 740 320 540 178" fill="none" stroke="#a3501a" stroke-width="1" stroke-dasharray="3 5" marker-end="url(#arrow2)" opacity="0.7"/>
+            <text x="740" y="318" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a3501a" letter-spacing="2">RE-DISPATCH FRESH GENERATOR</text>
+
+            <!-- Far right exit -->
+            <g>
+              <text x="1100" y="110" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf" letter-spacing="2">SHIP</text>
+              <text x="1100" y="88" text-anchor="middle" font-family="Instrument Serif" font-size="22" fill="#ff7a1a" font-style="italic">→</text>
+              <text x="1100" y="210" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8a7e6a">push · PR · land</text>
+            </g>
+          </svg>
+        </div>
+
+        <p>
+          The same <code>.feature</code> file runs at <code>localhost:3001</code> and against <code>app.dev.nexentra.ai</code>. No duplicate suites. Differences — auth, seed data — live in test helpers. The plan can never silently widen scope beyond what was approved; the Validator runs a diff check, and any file touched outside the approved list fails the build.
+        </p>
+
+        <p>
+          Plans touching domain data are required to include an explicit <strong>ADR-0066 exception block</strong> if they propose a REST surface instead of an agent tool. The loop refuses to deploy "REST as default" — Nexus is an agent-first platform, and the build cycle enforces that posture before the architecture review ever has to.
+        </p>
+      </section>
+
+      <!-- ===== Pullquote ===== -->
+      <p class="pullquote">
+        Plan negotiation first, code last. More time on what to build and whether it works; less time on what an LLM does badly anyway — context juggling, half-remembered mistakes, premature fixes.
+      </p>
+
+      <!-- ===== Section 04 ===== -->
+      <!-- ===== Section 05 — SUBSTRATE / STATE MANAGEMENT ===== -->
+      <section class="sec" id="substrate">
+        <span class="sec__num">§ 05 — Substrate</span>
+        <h2 class="sec__head">Files as the loop's <em>memory</em>.</h2>
+
+        <p>
+          The Lead does not pass tasks to the Generator through agent context. The Validator does not return verdicts through agent context. Every message between every actor in the loop is a file on disk. This was a structural decision and it is the load-bearing one — without it, none of the rest of the loop would survive a real working week.
+        </p>
+
+        <!-- File tree visual -->
+        <div class="phase-section" style="padding: 28px 28px 28px;">
+          <div class="phase-section__label">FIG. 04 / LOOP-STATE FILESYSTEM</div>
+<pre style="font-family: var(--mono); font-size: 13.5px; line-height: 1.65; color: var(--parchment-2); margin: 12px 0 0; padding: 18px 20px; background: var(--ink); border: 1px solid var(--ink-3); overflow-x: auto;">
+<span style="color: var(--amber);">.claude/loop-state/</span>
+├── <span style="color: var(--parchment);">plan.md</span>           <span style="color: #5a5040;">+</span> <span style="color: var(--parchment);">plan.html</span>      <span style="color: #5a5040;">← dual-format: machine + human</span>
+├── <span style="color: var(--parchment);">plan-approved.md</span>                  <span style="color: #5a5040;">← immutable post-negotiation snapshot</span>
+├── <span style="color: var(--parchment);">plan-review-N.md</span>                  <span style="color: #5a5040;">← Validator's adversarial critiques</span>
+├── <span style="color: var(--amber);">current-task.md</span>                   <span style="color: #5a5040;">← Lead → Generator handover</span>
+├── <span style="color: var(--parchment);">&lt;task-id&gt;-generator-report.md</span>     <span style="color: #5a5040;">← Generator → Lead</span>
+├── <span style="color: var(--parchment);">&lt;task-id&gt;-validator-report.md</span>     <span style="color: #5a5040;">← Validator → Lead</span>
+├── <span style="color: var(--amber);">manifest.json</span>                     <span style="color: #5a5040;">← state machine: status · phase · iter · budget</span>
+├── <span style="color: var(--parchment);">evals/</span>
+│   ├── &lt;feature&gt;-e2e.yaml             <span style="color: #5a5040;">← Playwright scenarios</span>
+│   └── &lt;feature&gt;-llm.yaml             <span style="color: #5a5040;">← LLM-as-judge rubrics</span>
+└── <span style="color: var(--parchment);">history/</span>                          <span style="color: #5a5040;">← every prior round, archived</span></pre>
+        </div>
+
+        <p>
+          The Lead writes; subagents read. The Lead's task handover to the Generator is a single file — <code>current-task.md</code> — containing task ID, mode (build or debug), declared file list, acceptance criteria, and references to <code>plan-approved.md</code>. The Generator is spawned, reads the file, does the work, writes a report, dies. The Validator follows the same pattern in reverse: read the report and the diff, write a verdict, die. The Lead, the only continuously-running session, reads those reports between iterations and writes the next task.
+        </p>
+
+        <!-- Swim-lane sequence diagram -->
+        <div class="phase-section" style="padding: 28px 28px 28px;">
+          <div class="phase-section__label">FIG. 05 / FILE-MEDIATED HANDOVER · ONE GENERATOR CYCLE</div>
+          <svg viewBox="0 0 1200 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <marker id="arrowS" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#ff7a1a" />
+              </marker>
+              <marker id="arrowSDim" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#8a7e6a" />
+              </marker>
+            </defs>
+
+            <!-- Lane headers -->
+            <g>
+              <rect x="60"   y="30" width="280" height="46" fill="#15110c" stroke="#ff7a1a" stroke-width="1.2"/>
+              <text x="200" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">ORCHESTRATOR</text>
+              <text x="200" y="70" text-anchor="middle" font-family="Instrument Serif" font-size="20" fill="#ebe1cf" font-style="italic">Lead · long-running</text>
+            </g>
+            <g>
+              <rect x="460"  y="30" width="280" height="46" fill="#15110c" stroke="#ebe1cf" stroke-width="1.2"/>
+              <text x="600" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf" letter-spacing="2">SUBSTRATE · ON DISK</text>
+              <text x="600" y="70" text-anchor="middle" font-family="Instrument Serif" font-size="20" fill="#ebe1cf" font-style="italic">.claude/loop-state/</text>
+            </g>
+            <g>
+              <rect x="860"  y="30" width="280" height="46" fill="#15110c" stroke="#a3501a" stroke-width="1.2"/>
+              <text x="1000" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#a3501a" letter-spacing="2">EXECUTOR · FRESH SPAWN</text>
+              <text x="1000" y="70" text-anchor="middle" font-family="Instrument Serif" font-size="20" fill="#ebe1cf" font-style="italic">Generator · dies on done</text>
+            </g>
+
+            <!-- Vertical lifelines -->
+            <line x1="200"  y1="80" x2="200"  y2="500" stroke="#1f1a13" stroke-width="1" stroke-dasharray="3 4"/>
+            <line x1="600"  y1="80" x2="600"  y2="500" stroke="#1f1a13" stroke-width="1" stroke-dasharray="3 4"/>
+            <line x1="1000" y1="80" x2="1000" y2="500" stroke="#1f1a13" stroke-width="1" stroke-dasharray="3 4"/>
+
+            <!-- Step 1: Lead writes current-task.md -->
+            <g>
+              <line x1="200" y1="120" x2="600" y2="120" stroke="#ff7a1a" stroke-width="1.2" marker-end="url(#arrowS)"/>
+              <text x="400" y="113" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a">write</text>
+              <text x="400" y="135" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf">current-task.md</text>
+            </g>
+
+            <!-- Step 2: Lead spawns Generator (across the diagram) -->
+            <g>
+              <path d="M 200 175 L 1000 175" stroke="#ff7a1a" stroke-width="1" stroke-dasharray="2 3" marker-end="url(#arrowS)"/>
+              <text x="600" y="167" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a">spawn · Agent() · fresh context</text>
+              <!-- spawn marker on Generator lane -->
+              <circle cx="1000" cy="175" r="6" fill="#0c0a08" stroke="#a3501a" stroke-width="1.3"/>
+            </g>
+
+            <!-- Step 3: Generator reads current-task.md -->
+            <g>
+              <line x1="1000" y1="220" x2="600" y2="220" stroke="#8a7e6a" stroke-width="1" marker-end="url(#arrowSDim)"/>
+              <text x="800" y="213" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">read</text>
+              <text x="800" y="235" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf">current-task.md</text>
+            </g>
+
+            <!-- Step 4: Generator reads plan-approved.md -->
+            <g>
+              <line x1="1000" y1="270" x2="600" y2="270" stroke="#8a7e6a" stroke-width="1" marker-end="url(#arrowSDim)"/>
+              <text x="800" y="263" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">read</text>
+              <text x="800" y="285" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf">plan-approved.md</text>
+            </g>
+
+            <!-- Step 5: Generator does work (self-loop) -->
+            <g>
+              <path d="M 1000 310 Q 1100 340 1000 370" fill="none" stroke="#a3501a" stroke-width="1" stroke-dasharray="2 3" marker-end="url(#arrowSDim)"/>
+              <text x="1115" y="343" font-family="JetBrains Mono" font-size="10" fill="#a3501a">lint</text>
+              <text x="1115" y="358" font-family="JetBrains Mono" font-size="10" fill="#a3501a">type</text>
+              <text x="1115" y="373" font-family="JetBrains Mono" font-size="10" fill="#a3501a">unit</text>
+            </g>
+
+            <!-- Step 6: Generator writes report -->
+            <g>
+              <line x1="1000" y1="410" x2="600" y2="410" stroke="#ff7a1a" stroke-width="1.2" marker-end="url(#arrowS)"/>
+              <text x="800" y="403" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a">write</text>
+              <text x="800" y="425" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf">&lt;task-id&gt;-generator-report.md</text>
+            </g>
+
+            <!-- Step 7: Generator dies (X marker) -->
+            <g>
+              <line x1="990" y1="445" x2="1010" y2="465" stroke="#e34a1e" stroke-width="1.5"/>
+              <line x1="1010" y1="445" x2="990" y2="465" stroke="#e34a1e" stroke-width="1.5"/>
+              <text x="1030" y="460" font-family="JetBrains Mono" font-size="10" fill="#e34a1e" letter-spacing="2">DIES</text>
+            </g>
+
+            <!-- Step 8: Lead reads report -->
+            <g>
+              <line x1="600" y1="480" x2="200" y2="480" stroke="#ff7a1a" stroke-width="1.2" marker-end="url(#arrowS)"/>
+              <text x="400" y="473" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a">read</text>
+              <text x="400" y="495" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf">&lt;task-id&gt;-generator-report.md</text>
+            </g>
+
+            <!-- Margin annotations -->
+            <text x="60" y="525" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ NO DIRECT CHANNEL — every message goes through the filesystem ∙ context is for thinking, files are for memory ∙</text>
+          </svg>
+        </div>
+
+        <p>
+          Five effects fall out, and they are why the substrate is the quiet hero of the dev loop.
+        </p>
+
+        <div class="failures">
+          <div class="failure">
+            <div class="failure__num">S · 01</div>
+            <div class="failure__title">Resumable.</div>
+            <div class="failure__body">Kill the Lead and restart it from <code>manifest.json</code> — the loop picks up at the right phase, with every prior report and verdict intact. Session crashes are routine, not catastrophic.</div>
+          </div>
+          <div class="failure">
+            <div class="failure__num">S · 02</div>
+            <div class="failure__title">Observable.</div>
+            <div class="failure__body">From any second terminal: <code>cat current-task.md</code>, <code>tail history/</code>, <code>jq . manifest.json</code>. See what the loop is doing right now. No instrumentation tax.</div>
+          </div>
+          <div class="failure">
+            <div class="failure__num">S · 03</div>
+            <div class="failure__title">Auditable.</div>
+            <div class="failure__body">Every round leaves an immutable trace in <code>history/</code>. The full reasoning path of any feature can be reconstructed weeks later — long after every agent that produced it is gone.</div>
+          </div>
+          <div class="failure">
+            <div class="failure__num">S · 04</div>
+            <div class="failure__title">Multi-process safe.</div>
+            <div class="failure__body">Multiple agents writing simultaneously touch different files. No shared in-memory state to corrupt. The filesystem is the lock and the journal both.</div>
+          </div>
+          <div class="failure">
+            <div class="failure__num">S · 05</div>
+            <div class="failure__title">Survives the substrate.</div>
+            <div class="failure__body">Tailscale drops, laptop closes, tmux reconnects, the remote ECS task restarts — none of it loses place. The state is on disk on the remote box. The loop does not flinch.</div>
+          </div>
+          <div class="failure">
+            <div class="failure__num">S · 06</div>
+            <div class="failure__title">Decouples thinking from memory.</div>
+            <div class="failure__body">Agent context is for reasoning. The filesystem is for remembering. Mixing the two is how chaos starts; separating them is how the loop scales past a single session.</div>
+          </div>
+        </div>
+
+        <!-- HTML rendering / Tariq effect -->
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 56px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">THE READING LAYER / DUAL FORMAT</span>
+          How the human actually reads it.
+        </h3>
+        <p>
+          Every plan, every spec, every design ships in two forms: <code>plan.md</code> for the loop itself, and <code>plan.html</code> for human reading. The HTML versions are rendered with the same visual rigor as the article you are reading — diagrams, tables, hierarchy, semantic structure, color-coded sections.
+        </p>
+        <p>
+          This is the principle Tariq (<a href="https://thariqs.github.io/html-effectiveness/" style="color: var(--amber); text-decoration: none; border-bottom: 1px solid var(--amber-dim);">HTML Effectiveness</a>) documents exhaustively across twenty examples. His central claim — <em>"diffs and call-graphs are spatial information; markdown flattens them"</em> — is exactly the failure mode the dev loop kept hitting before we adopted the dual-format rule. A 1,500-line markdown plan gets <strong>skimmed</strong>. The same content rendered as a structured HTML document, with the architecture diagram on the page and the acceptance criteria in a styled table, gets <strong>actually read</strong>.
+        </p>
+
+        <!-- before/after callout -->
+        <div class="phase-section" style="padding: 28px; margin: 28px 0;">
+          <div class="phase-section__label">FIG. 06 / WHAT CHANGED WHEN WE RENDERED PLANS AS HTML</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px;">
+            <div style="border: 1px solid var(--ink-3); padding: 20px; background: var(--ink);">
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; color: #5a5040; margin-bottom: 12px;">BEFORE · MARKDOWN ONLY</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 22px; color: var(--parchment-2); line-height: 1.25; margin-bottom: 14px;">"I'll just skim for the section I care about."</div>
+              <div style="font-family: var(--body); font-size: 14px; color: var(--ochre); line-height: 1.5;">
+                Plans got read in fragments. Architecture diagrams were ASCII or absent. Acceptance criteria buried in prose. Validator and Lead negotiated past each other because neither had genuinely absorbed the plan.
+              </div>
+            </div>
+            <div style="border: 1px solid var(--amber-dim); padding: 20px; background: var(--ink);">
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; color: var(--amber); margin-bottom: 12px;">AFTER · DUAL FORMAT</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 22px; color: var(--parchment); line-height: 1.25; margin-bottom: 14px;">"I actually read every section."</div>
+              <div style="font-family: var(--body); font-size: 14px; color: var(--parchment-2); line-height: 1.5;">
+                Plans rendered with diagrams inline, criteria in styled tables, hierarchy visually obvious. Reviews surface real critiques — <em>"this acceptance criterion is unmeasurable, here is why"</em> — not <em>"what did you mean here?"</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          The Validator's plan-review quality improved measurably the week we shipped this. Fewer clarification rounds. More substantive critique. Faster convergence to PLAN-APPROVED. Tariq's argument is right; we built our build cycle around it.
+        </p>
+        <p>
+          The combination — <strong>plans on disk, rendered as HTML, reviewed by a fresh-context Validator</strong> — is what made the loop go from interesting experiment to operational substrate. Filesystem state is how the loop remembers. HTML rendering is how the human reads. Both were retrofits. Both were quiet, structural improvements that changed everything downstream.
+        </p>
+      </section>
+
+      <!-- ===== Section 06 — FORCING FUNCTIONS ===== -->
+      <section class="sec" id="forcing">
+        <span class="sec__num">§ 06 — Forcing functions</span>
+        <h2 class="sec__head">Why it <em>actually</em> works.</h2>
+
+        <p>
+          Three structural choices look like operational details but actually carry the weight. They are not features of the loop. They are <em>why</em> the loop works. Strip any one of them and the whole apparatus regresses to "agents wandering with good intentions."
+        </p>
+
+        <!-- Forcing function 01 -->
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 40px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">FORCING FUNCTION 01 / DEBATE</span>
+          The two-actor adversarial plan review.
+        </h3>
+        <p>
+          The Lead drafts a plan. The Validator — a fresh context with no incentive to defend the Lead's reasoning — critiques it. The Lead revises. Up to five rounds. This is not a code review. It is a <strong>plan review, before any code is written</strong>. Two consequences fall out, and both materially raise the quality of every spec, every design, and every acceptance criterion that follows.
+        </p>
+        <p>
+          Ambiguity surfaces immediately. A vague acceptance criterion is the easiest thing to attack, so the Validator attacks it. The Lead either sharpens it into something machine-checkable or removes it. By round three, the plan has been pruned to claims that can be defended against an adversarial reader. The result is not consensus — it is a plan whose <em>weak parts have been named</em>.
+        </p>
+        <p>
+          The economics matter. Critique costs token-pennies; correcting a wrong implementation costs a re-spawn, a re-deploy, an evening. We pay for plan-quality at the cheap end of the loop, where it is most affordable. This is the same instinct as the Devil's Advocate gate in ADR-0064 — two-actor debate is the architectural answer to <em>"how do we make an LLM disagree with itself usefully?"</em>
+        </p>
+
+        <!-- Forcing function 02 -->
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">FORCING FUNCTION 02 / QUOTA</span>
+          Finite resource budgets.
+        </h3>
+        <p>
+          Every loop carries an agreed wall-clock budget. Every plan-negotiation round counts against a hard cap of five. Every Generator task has a declared file list it cannot exceed. Every Validator verdict must conclude — no <em>"needs further investigation"</em> without an explicit re-dispatch. Quotas are the loop's anti-bikeshedding immune system. Without them:
+        </p>
+        <p>
+          Plan negotiation drifts toward perfectionism. With them, it converges — the Lead and Validator both know round five is a hard stop, so meaningful disagreement gets surfaced to the human, not buried in another round of nuance. Build tasks grow scope silently. With them, scope growth requires the Generator to escalate to the Lead in writing. Validators hedge. With them, hedging is structurally banned: <strong>when in doubt, FAIL</strong>.
+        </p>
+        <p>
+          The constraint is what produces the discipline. <em>"Engineering judgment"</em> is a phrase that means nothing without a budget; with one, it becomes a real act of trade-off. Finite resources turn open-ended LLM reasoning into bounded engineering.
+        </p>
+
+        <!-- Forcing function 03 -->
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">FORCING FUNCTION 03 / FRESHNESS</span>
+          Disposable subagents, by design.
+        </h3>
+        <p>
+          Long-running agents rot. They accumulate wrong hypotheses, hedge against bugs that no longer exist, get stuck defending earlier mistakes, and inherit confused mental models across iterations. <strong>Context-rot is the silent killer of long agent sessions.</strong> The Generator and Validator are spawned fresh on every task — they have no memory of the prior iteration's bad guess. They read the task file, do the work, and die.
+        </p>
+        <p>
+          Three effects compound. Cognition stays clean — each task is reasoned from first principles against the current state of the code, not against accumulated mythology. Reports become primary sources — because the Lead is the only continuous session, every cross-task message goes through written reports, and those reports become the audit trail of the build. Failure is local — a bad Generator run does not poison the next one. The Lead reads the failure report, writes a fresh debug task, spawns a fresh Generator. Clean slate every time.
+        </p>
+        <p>
+          The dev loop treats every sub-agent as disposable on principle, not on convenience. That principle is what lets the loop run for hours without intervention: there is nothing accumulating in the corners.
+        </p>
+
+        <!-- Forcing function 04 -->
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">FORCING FUNCTION 04 / DETERMINISM</span>
+          TDD RED-first.
+        </h3>
+        <p>
+          The most expensive bug in agentic dev is the green-when-it-shouldn't-be test. The agent writes the implementation. The agent writes a test that asserts what the implementation already does. The test passes. The build looks green. The bug ships. We make this structurally impossible by writing the tests <em>first</em> and verifying them <strong>RED</strong> before any implementation is dispatched.
+        </p>
+        <p>
+          Phase 1 of every feature produces, in this exact order: <code>tests/e2e/features/&lt;feature&gt;.feature</code> (Gherkin BDD scenarios), <code>tests/e2e/steps/&lt;feature&gt;.ts</code> (step definitions), <code>.claude/loop-state/evals/&lt;feature&gt;-e2e.yaml</code> (Playwright eval criteria), and <code>.claude/loop-state/evals/&lt;feature&gt;-llm.yaml</code> (LLM-as-judge rubrics). The Validator then runs the suite in both modes — <code>localhost:3001</code> against the local stack and <code>app.dev.nexentra.ai</code> against AWS dev — and confirms <strong>every scenario fails</strong>. Only after that confirmation does the implementation plan get approved. Acceptance criteria are not prose. They are executable. The Lead cannot say <em>"this feature works"</em>; the test runner says it.
+        </p>
+        <p>
+          Three effects compound. The Validator's verdict becomes <strong>deterministic</strong> — pass/fail is binary, grounded in code execution, not LLM judgment. The LLM-as-judge layer is still there for agent-quality scoring, but functional correctness is verified by Playwright clicking buttons and asserting DOM state, and by Python assertions against DynamoDB rows, SPARQL results, and pgvector retrievals. The plan and the test become <strong>the same artifact</strong> — a vague acceptance criterion cannot survive translation into a Gherkin scenario, so plan review and test review collapse into the same review. False positives become <strong>structurally impossible</strong> — a test that was green before implementation cannot be trusted to have caught anything; RED-first proves the test means what it claims to mean.
+        </p>
+        <p>
+          This is determinism layered on top of LLM reasoning. The agents are creative inside the bounded space; the test suite is the boundary. Where an unbounded LLM would drift, a RED test pulls it back to a single binary answer: <em>is the user-visible scenario now passing or not?</em> Everything else is opinion. Without the RED-first discipline, the loop's verdicts are confident but uncalibrated. With it, they are <strong>reproducible</strong>.
+        </p>
+
+        <!-- Forcing function summary panel -->
+        <div class="phase-section" style="padding: 28px 28px 24px; margin-top: 40px;">
+          <div class="phase-section__label">FIG. 07 / WHAT EACH FORCING FUNCTION REPLACES</div>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 16px;">
+            <div style="border-top: 1px solid var(--amber-dim); padding-top: 14px;">
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: var(--amber); margin-bottom: 8px;">01 / DEBATE</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 18px; color: var(--parchment); line-height: 1.25; margin-bottom: 10px;">replaces good intentions with</div>
+              <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; color: var(--amber); text-transform: uppercase;">defensible specs</div>
+            </div>
+            <div style="border-top: 1px solid var(--amber-dim); padding-top: 14px;">
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: var(--amber); margin-bottom: 8px;">02 / QUOTA</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 18px; color: var(--parchment); line-height: 1.25; margin-bottom: 10px;">replaces perfectionism with</div>
+              <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; color: var(--amber); text-transform: uppercase;">convergence</div>
+            </div>
+            <div style="border-top: 1px solid var(--amber-dim); padding-top: 14px;">
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: var(--amber); margin-bottom: 8px;">03 / FRESHNESS</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 18px; color: var(--parchment); line-height: 1.25; margin-bottom: 10px;">replaces context-rot with</div>
+              <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; color: var(--amber); text-transform: uppercase;">first-principles cognition</div>
+            </div>
+            <div style="border-top: 1px solid var(--amber); padding-top: 14px;">
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: var(--amber); margin-bottom: 8px;">04 / DETERMINISM</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 18px; color: var(--parchment); line-height: 1.25; margin-bottom: 10px;">replaces LLM opinion with</div>
+              <div style="font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; color: var(--amber); text-transform: uppercase;">RED → GREEN signal</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Section 06 — LINEAGE ===== -->
+      <section class="sec" id="claude">
+        <span class="sec__num">§ 07 — Lineage</span>
+        <h2 class="sec__head">Anthropic's <em>framework</em>, recognized in the wild.</h2>
+
+        <p>
+          The dev loop is a deliberate composition of patterns Claude is good at. None of these are invented here. What is new is the binding of them into a single coherent build cycle for institutional software.
+        </p>
+
+        <p>
+          There is a specific lineage worth naming first. In late 2024 Anthropic published <a href="https://www.anthropic.com/research/building-effective-agents" style="color: var(--amber); text-decoration: none; border-bottom: 1px solid var(--amber-dim);">Building effective agents</a> — a clean taxonomy of five workflow patterns and one agent pattern that the industry has been quietly converging on. Tariq <a href="https://x.com/trq212/status/2061907337154367865" style="color: var(--amber); text-decoration: none; border-bottom: 1px solid var(--amber-dim);">pointed at this lineage</a> recently; once we read the framework against our own setup, the resemblance was not accidental. The dev loop is a precise composition of three of Anthropic's named patterns.
+        </p>
+
+        <!-- Anthropic mapping diagram -->
+        <div class="phase-section" style="padding: 30px 28px 28px;">
+          <div class="phase-section__label">FIG. 08 / ANTHROPIC'S TAXONOMY · DEV LOOP MAPPING</div>
+          <svg viewBox="0 0 1200 500" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <marker id="arrowL" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#ff7a1a" />
+              </marker>
+            </defs>
+
+            <!-- Column headers -->
+            <text x="280" y="32" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#5a5040" letter-spacing="3">ANTHROPIC PATTERN</text>
+            <text x="600" y="32" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#5a5040" letter-spacing="3">≡</text>
+            <text x="920" y="32" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="3">DEV LOOP REALIZATION</text>
+            <line x1="60"   y1="42" x2="500"  y2="42" stroke="#1f1a13"/>
+            <line x1="700"  y1="42" x2="1140" y2="42" stroke="#1f1a13"/>
+
+            <!-- ===== ROW 1: Orchestrator-workers ===== -->
+            <g transform="translate(0, 60)">
+              <rect x="60"  y="0" width="440" height="110" fill="#15110c" stroke="#1f1a13"/>
+              <text x="80"  y="26" font-family="JetBrains Mono" font-size="10" fill="#a3501a" letter-spacing="2">WORKFLOW · 04</text>
+              <text x="80"  y="56" font-family="Instrument Serif" font-size="26" fill="#ebe1cf" font-style="italic">Orchestrator-workers</text>
+              <text x="80"  y="82" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">A central LLM decomposes tasks dynamically,</text>
+              <text x="80"  y="98" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">delegates to worker LLMs, synthesizes results.</text>
+
+              <!-- connector -->
+              <line x1="500" y1="55" x2="700" y2="55" stroke="#ff7a1a" stroke-width="1.2" stroke-dasharray="4 6" marker-end="url(#arrowL)"/>
+              <text x="600" y="46" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#ff7a1a" letter-spacing="2">MAPS TO</text>
+
+              <rect x="700" y="0" width="440" height="110" fill="#15110c" stroke="#ff7a1a" stroke-width="1.2"/>
+              <text x="720" y="26" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">LEAD ⟶ FRESH WORKERS</text>
+              <text x="720" y="56" font-family="Instrument Serif" font-size="26" fill="#ebe1cf" font-style="italic">Lead spawns Generator + Validator</text>
+              <text x="720" y="82" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">Lead decomposes feature into bounded tasks,</text>
+              <text x="720" y="98" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">spawns fresh workers per task, synthesizes reports.</text>
+            </g>
+
+            <!-- ===== ROW 2: Evaluator-optimizer ===== -->
+            <g transform="translate(0, 200)">
+              <rect x="60"  y="0" width="440" height="110" fill="#15110c" stroke="#1f1a13"/>
+              <text x="80"  y="26" font-family="JetBrains Mono" font-size="10" fill="#a3501a" letter-spacing="2">WORKFLOW · 05</text>
+              <text x="80"  y="56" font-family="Instrument Serif" font-size="26" fill="#ebe1cf" font-style="italic">Evaluator-optimizer</text>
+              <text x="80"  y="82" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">One LLM generates, another evaluates and gives</text>
+              <text x="80"  y="98" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">iterative feedback in a loop, refining outputs.</text>
+
+              <line x1="500" y1="55" x2="700" y2="55" stroke="#ff7a1a" stroke-width="1.2" stroke-dasharray="4 6" marker-end="url(#arrowL)"/>
+              <text x="600" y="46" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#ff7a1a" letter-spacing="2">MAPS TO</text>
+
+              <rect x="700" y="0" width="440" height="110" fill="#15110c" stroke="#ff7a1a" stroke-width="1.2"/>
+              <text x="720" y="26" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">PLAN-NEGOTIATE × 5</text>
+              <text x="720" y="56" font-family="Instrument Serif" font-size="26" fill="#ebe1cf" font-style="italic">Lead ⇄ Validator plan loop</text>
+              <text x="720" y="82" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">Lead drafts plan, Validator critiques, Lead revises.</text>
+              <text x="720" y="98" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">Hard quota (5 rounds) forces convergence.</text>
+            </g>
+
+            <!-- ===== ROW 3: Autonomous agent ===== -->
+            <g transform="translate(0, 340)">
+              <rect x="60"  y="0" width="440" height="110" fill="#15110c" stroke="#1f1a13"/>
+              <text x="80"  y="26" font-family="JetBrains Mono" font-size="10" fill="#a3501a" letter-spacing="2">AGENT PATTERN</text>
+              <text x="80"  y="56" font-family="Instrument Serif" font-size="26" fill="#ebe1cf" font-style="italic">Autonomous agent</text>
+              <text x="80"  y="82" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">LLM independently plans, executes tools, observes,</text>
+              <text x="80"  y="98" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">loops — with human checkpoints + stopping conditions.</text>
+
+              <line x1="500" y1="55" x2="700" y2="55" stroke="#ff7a1a" stroke-width="1.2" stroke-dasharray="4 6" marker-end="url(#arrowL)"/>
+              <text x="600" y="46" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#ff7a1a" letter-spacing="2">MAPS TO</text>
+
+              <rect x="700" y="0" width="440" height="110" fill="#15110c" stroke="#ff7a1a" stroke-width="1.2"/>
+              <text x="720" y="26" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">THE LEAD ITSELF</text>
+              <text x="720" y="56" font-family="Instrument Serif" font-size="26" fill="#ebe1cf" font-style="italic">Lead as autonomous agent</text>
+              <text x="720" y="82" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">Plans, dispatches, observes verdicts, re-plans.</text>
+              <text x="720" y="98" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">Stops at inflection points — humans decide.</text>
+            </g>
+
+            <!-- Bottom legend -->
+            <text x="600" y="490" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="3">— WORKFLOW RIGOR AT THE OUTER LAYER · AGENT FLEXIBILITY AT THE PLANNING LAYER —</text>
+          </svg>
+        </div>
+
+        <p>
+          Three resemblances, named precisely. The Lead, viewed from outside, is Anthropic's <strong>autonomous agent</strong> — a long-running LLM that plans, dispatches, observes, and re-plans, with human checkpoints at inflection points (which is where Sumedha shows up). The Lead, viewed from inside, runs a strict <strong>orchestrator-workers</strong> workflow — it decomposes the feature into bounded tasks, delegates each to a fresh worker (Generator or Validator), and synthesizes the returned reports into the next round of planning. The plan-negotiate phase is a pure <strong>evaluator-optimizer</strong> loop — the Lead drafts, the Validator critiques, the Lead revises, with a 5-round quota that maps directly to Anthropic's <em>"iterative feedback in a loop, refining outputs."</em>
+        </p>
+
+        <p>
+          What we get from this naming: the dev loop is not idiosyncratic. It is the natural composition that falls out when you take Anthropic's published patterns seriously and apply them to a real build cycle. Workflow rigor at the outer level — predefined code paths the loop follows every time. Agent flexibility at the planning level — the Lead dynamically decides what to plan, when to escalate, when to converge. Hybrid by design, not by accident.
+        </p>
+
+        <p>
+          The framework was a relief when we found it. We had been building this for months and trying to explain it as <em>"a multi-agent thing."</em> Anthropic's vocabulary gave us names for what we already had — and made obvious what the missing piece was. The article is mostly silent on state: how the orchestrator remembers, how the evaluator's verdicts persist, how the loop survives a session crash. That is the work the filesystem does in our loop (§05), and it is what turns these patterns from a research framework into a build cycle that runs while you sleep.
+        </p>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 56px 0 16px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">THE BROADER LINEAGE</span>
+          Other patterns the loop borrows.
+        </h3>
+
+        <p>
+          Beyond the three workflows above, the loop leans on a wider set of agentic-LLM disciplines. Each is a deliberate choice; none of them are accidents.
+        </p>
+
+        <div class="pattern-table">
+          <div class="pattern-row pattern-row--head">
+            <div>Pattern in Claude</div>
+            <div>How the dev loop applies it</div>
+          </div>
+          <div class="pattern-row">
+            <div class="pattern-cell"><b>Multi-agent orchestration</b>Orchestrator with bounded workers.</div>
+            <div class="pattern-cell">Lead orchestrates; Generator and Validator are workers with crisp scopes. Mirrors the chief-architect / specialist team model used elsewhere in the repo.</div>
+          </div>
+          <div class="pattern-row">
+            <div class="pattern-cell"><b>Sub-agent context isolation</b>Fresh window per task.</div>
+            <div class="pattern-cell">Each <code>Agent()</code> spawn is clean. No cross-task contamination. The Lead carries memory; the workers do not.</div>
+          </div>
+          <div class="pattern-row">
+            <div class="pattern-cell"><b>ReAct loop</b>Thought → Action → Observation.</div>
+            <div class="pattern-cell">Plan-negotiate → build → validate → interpret → re-plan is ReAct at a higher altitude. The Validator's "find evidence before declaring verdict" is the Observation step made structural.</div>
+          </div>
+          <div class="pattern-row">
+            <div class="pattern-cell"><b>LLM-as-judge</b>Rubric-scored output.</div>
+            <div class="pattern-cell">Validator's <code>mode: llm-eval</code> scores agent responses against rubrics in <code>*-llm.yaml</code> scenarios. Pass/fail is auditable, not vibes-based.</div>
+          </div>
+          <div class="pattern-row">
+            <div class="pattern-cell"><b>Plan-then-execute</b>Approval before action.</div>
+            <div class="pattern-cell">PLAN-DRAFT → PLAN-NEGOTIATE → PLAN-APPROVED is immutable. Execution cannot silently widen scope.</div>
+          </div>
+          <div class="pattern-row">
+            <div class="pattern-cell"><b>Tool use</b>Structured external action.</div>
+            <div class="pattern-cell">Playwright is a tool. The MCP browser is a tool. <code>aws dynamodb get-item</code>, <code>aws logs tail</code>, SPARQL queries — all tools the Validator invokes with structured purpose.</div>
+          </div>
+          <div class="pattern-row">
+            <div class="pattern-cell"><b>Adversarial reward shaping</b>Asymmetric penalties.</div>
+            <div class="pattern-cell">Validator's 10× false-PASS penalty is the same shape Anthropic uses to train safer behaviour. <em>When in doubt, FAIL</em> is a forcing function, not a slogan.</div>
+          </div>
+          <div class="pattern-row">
+            <div class="pattern-cell"><b>Verification before completion</b>Evidence before assertion.</div>
+            <div class="pattern-cell">The same discipline as Anthropic's <code>superpowers:verification-before-completion</code>. No claim of done without a verifying read.</div>
+          </div>
+          <div class="pattern-row">
+            <div class="pattern-cell"><b>Test-driven development</b>Tests written first, verified RED.</div>
+            <div class="pattern-cell">Phase 1 writes <code>.feature</code> + step defs and verifies RED before allowing implementation. TDD at the feature level, enforced by the loop rather than by goodwill.</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ===== Section 08 — RULES / GOVERNANCE ===== -->
+      <section class="sec" id="rules">
+        <span class="sec__num">§ 08 — Rules</span>
+        <h2 class="sec__head">Bounded by a <em>written rulebook</em>.</h2>
+
+        <p>
+          The autonomy is real. It is also <em>not</em> unbounded. The loop operates inside a thick, versioned, machine-readable rulebook that every actor reads at planning time and at validation time. This is how you govern human engineers — through written rules, reviewed and consistent. It is how you govern AI engineers too. The rulebook is the scope. The loop is what operates inside it.
+        </p>
+
+        <p>
+          What follows is the literal stack of rules the loop respects, layered from highest authority to most local — and a note on which actor reads which.
+        </p>
+
+        <!-- THE RULEBOOK STACK -->
+        <div class="phase-section" style="padding: 30px 28px 28px;">
+          <div class="phase-section__label">FIG. 09 / THE RULEBOOK · FIVE LAYERS, READ BY EACH ACTOR</div>
+
+          <!-- LAYER 1: CLAUDE.md root -->
+          <div style="border: 1.5px solid var(--amber); background: var(--ink-2); padding: 20px 22px; margin: 14px 0 10px; display: grid; grid-template-columns: 180px 1fr 220px; gap: 18px;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; color: var(--amber); margin-bottom: 4px;">LAYER 1 · CONSTITUTION</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 24px; color: var(--parchment); line-height: 1.05;">CLAUDE.md (root)</div>
+            </div>
+            <div style="font-family: var(--body); font-size: 14.5px; color: var(--parchment); line-height: 1.55;">
+              14 hard engineering constraints (no public IPs, vector storage is pgvector NEVER OpenSearch, mock=false every session, both KG + RAG always available, etc.) · 9 architecture principles · tech stack constants · build wave sequence
+            </div>
+            <div style="font-family: var(--mono); font-size: 10.5px; color: var(--ochre); line-height: 1.55; letter-spacing: 0.04em;">
+              <span style="color: var(--amber);">READ BY:</span><br/>
+              Lead before every plan<br/>
+              Generator before every build<br/>
+              Validator on every verdict
+            </div>
+          </div>
+
+          <!-- LAYER 2: ADRs -->
+          <div style="border: 1px solid var(--amber-dim); background: var(--ink-2); padding: 20px 22px; margin: 0 0 10px; display: grid; grid-template-columns: 180px 1fr 220px; gap: 18px;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; color: var(--amber); margin-bottom: 4px;">LAYER 2 · KEYSTONES</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 24px; color: var(--parchment); line-height: 1.05;">Architecture<br/>Decision Records</div>
+            </div>
+            <div style="font-family: var(--body); font-size: 14.5px; color: var(--parchment); line-height: 1.55;">
+              15 keystone ADRs the loop cannot regress. Daily-touched: <code>ADR-0019</code> layer-isolated monorepo · <code>ADR-0054</code> service consolidation · <code>ADR-0064</code> two-actor Devil's Advocate gate · <code>ADR-0065</code> chat-first model · <code>ADR-0066</code> agent-first, REST as last resort
+            </div>
+            <div style="font-family: var(--mono); font-size: 10.5px; color: var(--ochre); line-height: 1.55; letter-spacing: 0.04em;">
+              <span style="color: var(--amber);">READ BY:</span><br/>
+              Lead during plan drafting<br/>
+              Validator rejects plans that contradict an active ADR
+            </div>
+          </div>
+
+          <!-- LAYER 3: Shared references -->
+          <div style="border: 1px solid var(--ink-3); background: var(--ink-2); padding: 20px 22px; margin: 0 0 10px; display: grid; grid-template-columns: 180px 1fr 220px; gap: 18px;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; color: var(--ochre); margin-bottom: 4px;">LAYER 3 · OPERATING PROCEDURES</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 24px; color: var(--parchment); line-height: 1.05;">Shared references</div>
+            </div>
+            <div style="font-family: var(--body); font-size: 14.5px; color: var(--parchment-2); line-height: 1.55;">
+              <code>.claude/agents/references/</code> — architecture-principles · stack-constraints · code-standards · engineering-workflow · devils-advocate-protocol · glossary · adr-template · dev-loop-plan-format · dev-loop-task-format
+            </div>
+            <div style="font-family: var(--mono); font-size: 10.5px; color: var(--ochre); line-height: 1.55; letter-spacing: 0.04em;">
+              <span style="color: var(--amber);">READ BY:</span><br/>
+              Generator for style<br/>
+              Validator for enforcement<br/>
+              Lead for plan format
+            </div>
+          </div>
+
+          <!-- LAYER 4: Per-service CLAUDE.md -->
+          <div style="border: 1px solid var(--ink-3); background: var(--ink-2); padding: 20px 22px; margin: 0 0 10px; display: grid; grid-template-columns: 180px 1fr 220px; gap: 18px;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; color: var(--ochre); margin-bottom: 4px;">LAYER 4 · LOCAL RULES</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 24px; color: var(--parchment); line-height: 1.05;">Per-service<br/>CLAUDE.md</div>
+            </div>
+            <div style="font-family: var(--body); font-size: 14.5px; color: var(--parchment-2); line-height: 1.55;">
+              Each service directory carries its own CLAUDE.md — <code>nexus/governance/</code> · <code>nexus/agent/agent-runtime/</code> · <code>nexus/data/connector-api/</code> · <code>web/</code>. Local schemas, internal interfaces, language conventions.
+            </div>
+            <div style="font-family: var(--mono); font-size: 10.5px; color: var(--ochre); line-height: 1.55; letter-spacing: 0.04em;">
+              <span style="color: var(--amber);">READ BY:</span><br/>
+              Generator when working in that service<br/>
+              Validator on diff scope
+            </div>
+          </div>
+
+          <!-- LAYER 5: Loop self-rules -->
+          <div style="border: 1px solid var(--ink-3); background: var(--ink-2); padding: 20px 22px; margin: 0 0 0; display: grid; grid-template-columns: 180px 1fr 220px; gap: 18px;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; color: var(--ochre); margin-bottom: 4px;">LAYER 5 · LOOP CHARTER</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 24px; color: var(--parchment); line-height: 1.05;">Loop self-rules</div>
+            </div>
+            <div style="font-family: var(--body); font-size: 14.5px; color: var(--parchment-2); line-height: 1.55;">
+              <code>dev-loop-lead.md</code> · <code>dev-loop-generator.md</code> · <code>dev-loop-validator.md</code> · <code>dev-loop-e2e-validator.md</code> · <code>references/dev-loop-comm-protocol.md</code> · <code>dev-loop-manifest-schema.md</code> — Lead writes no code, 10× false-PASS penalty, max 5 plan rounds, persistence-layer evidence required, ADR-0066 exception block when REST is proposed
+            </div>
+            <div style="font-family: var(--mono); font-size: 10.5px; color: var(--ochre); line-height: 1.55; letter-spacing: 0.04em;">
+              <span style="color: var(--amber);">READ BY:</span><br/>
+              Each actor reads its own charter on spawn — self-applied
+            </div>
+          </div>
+
+          <div style="margin-top: 18px; font-family: var(--mono); font-size: 9.5px; color: var(--ochre); letter-spacing: 2px; text-align: center;">
+            ↑ HIGHEST AUTHORITY · LOWEST LOCAL ↓
+          </div>
+        </div>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">HOW THE RULES ENTER THE DECISION</span>
+          Cited, not improvised.
+        </h3>
+        <p>
+          The Lead reads the relevant layers during <code>PLAN-DRAFT</code>. The Validator reads the same layers during <code>PLAN-REVIEW</code> and verdict construction. Both actors are <strong>quoting from the rulebook</strong>, not making it up. When the Lead proposes a new REST surface, the Validator does not say <em>"this feels wrong"</em> — it says <em>"this violates ADR-0066; the plan is missing the required ADR-0066 EXCEPTION subsection."</em> Disagreements are adjudicated by reference to written rule, and the rule is reachable in the repo.
+        </p>
+        <p>
+          When a rule is missing or ambiguous, the loop surfaces the gap to the human via <code>AskUserQuestion</code>. It does not improvise. It does not guess. It asks. <strong>That escalation is itself a rule</strong> — written into the Lead's charter as the round-cap escape valve.
+        </p>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 40px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">SCOPED AUTONOMY</span>
+          What the rulebook actually does.
+        </h3>
+        <p>
+          Without the rulebook, an autonomous loop is unbounded — and unbounded autonomy in a financial-services repo is indefensible. With the rulebook, the loop's autonomy is <strong>scoped</strong>: it can plan, build, deploy, and verify within written boundaries, and it must escalate the moment a decision exceeds them. This is exactly how we govern human engineers. Written rules. Reviewed. Versioned. Enforced consistently. The only difference is that <em>the agents read the rules more carefully than we do</em>, because they are required to cite them.
+        </p>
+        <p>
+          Rules are not constraints that limit the loop. They are the institutional knowledge that makes its autonomy <strong>defensible</strong>. The dev loop is not <em>"unleashed AI."</em> It is <em>scope-bounded AI</em> — operating fully autonomously inside a written boundary the team agreed on in advance, and which the team can amend on the same review surface used for code. Rules are first-class artifacts. They get pull requests. They get reviewed. They ship.
+        </p>
+
+        <p class="pullquote" style="margin: 56px 0 24px;">
+          Autonomy is what the loop has. Scope is what the rulebook gives it. The combination is what makes it operable in a regulated codebase.
+        </p>
+      </section>
+
+      <!-- ===== Section 09 — TRUST ===== -->
+      <section class="sec" id="trust">
+        <span class="sec__num">§ 09 — Trust</span>
+        <h2 class="sec__head">Trusted as <em>engineers</em>.</h2>
+
+        <p>
+          Most organizations cannot bring themselves to extend production-grade access to coding agents. The <em>"AI as autocomplete"</em> framing is partly a brand decision and partly an honest trust constraint — the agents are kept in a sandbox because the consequences of letting them out feel unbounded. <strong>We took the opposite bet.</strong> Inside the dev loop, the agents have the same access surface a junior engineer would have on day one: scoped AWS credentials, deploy authority to dev, CloudWatch log access, database read paths, GitHub push, the ability to spawn ECS tasks and push container images. They are not assistants. They are engineers, and we treat them like it.
+        </p>
+
+        <!-- TRUST LADDER -->
+        <div class="phase-section" style="padding: 30px 28px 28px;">
+          <div class="phase-section__label">FIG. 10 / THE TRUST LADDER · WHAT EACH TIER OF AGENT IS GRANTED</div>
+
+          <!-- HUMAN crown band -->
+          <div style="border: 1px solid var(--amber); background: linear-gradient(180deg, #1c140b, #0c0a08); padding: 16px 22px; margin: 14px 0 10px; display: grid; grid-template-columns: 200px 1fr; gap: 18px; align-items: center;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; color: var(--amber); margin-bottom: 4px;">ARCHITECT · HUMAN</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 22px; color: var(--parchment); line-height: 1.1;">retains</div>
+            </div>
+            <div style="font-family: var(--body); font-size: 14.5px; color: var(--parchment); line-height: 1.5;">
+              what to build · plan approval at inflection points · merge-to-main authority · new IAM scope grants · cost ceiling overrides · secrets rotation · production deploys
+            </div>
+          </div>
+
+          <!-- TIER 4: AI SOFTWARE ENGINEER (us) -->
+          <div style="border: 1.5px solid var(--amber); background: var(--ink-2); padding: 20px 22px; margin: 0 0 10px; display: grid; grid-template-columns: 200px 1fr 1fr; gap: 18px; position: relative;">
+            <div style="position: absolute; top: -10px; right: 14px; background: var(--amber); color: var(--ink); padding: 2px 10px; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; font-weight: 500;">YOU ARE HERE</div>
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; color: var(--amber); margin-bottom: 4px;">TIER 4 · DEV LOOP</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 26px; color: var(--parchment); line-height: 1.05;">AI software engineer</div>
+            </div>
+            <div>
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: #4caf50; margin-bottom: 8px;">CAN</div>
+              <div style="font-family: var(--body); font-size: 14.5px; color: var(--parchment); line-height: 1.55;">
+                scoped AWS IAM (dev) · deploy to dev ECS · tail CloudWatch · query DDB · query Aurora pgvector · SPARQL on Neptune · push to GitHub · open PRs · run E2E + LLM evals · push images to ECR · spawn ECS tasks · invoke Bedrock + Anthropic
+              </div>
+            </div>
+            <div>
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: #e34a1e; margin-bottom: 8px;">CANNOT</div>
+              <div style="font-family: var(--body); font-size: 14.5px; color: var(--ochre); line-height: 1.55;">
+                prod deploys without human plan approval · customer data (dev uses synthetic seed) · secrets rotation · IAM role creation · merge to main · cost above per-loop budget · destructive DB writes outside loop-state
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 3: TEAM CONTRIBUTOR -->
+          <div style="border: 1px solid var(--ink-3); background: var(--ink-2); padding: 18px 22px; margin: 0 0 10px; display: grid; grid-template-columns: 200px 1fr 1fr; gap: 18px; opacity: 0.78;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; color: var(--ochre); margin-bottom: 4px;">TIER 3 · AGENT TEAMS</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 24px; color: var(--parchment-2); line-height: 1.05;">Team contributor</div>
+            </div>
+            <div>
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: #4caf50; margin-bottom: 8px;">CAN</div>
+              <div style="font-family: var(--body); font-size: 14px; color: var(--parchment-2); line-height: 1.5;">
+                open branches · run CI · invoke tool APIs · propose draft PRs · execute scoped scripts
+              </div>
+            </div>
+            <div>
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: #e34a1e; margin-bottom: 8px;">CANNOT</div>
+              <div style="font-family: var(--body); font-size: 14px; color: var(--ochre); line-height: 1.5;">
+                deploy anywhere · query production data · access cloud credentials · spawn infra
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 2: DEVELOPER ASSISTANT -->
+          <div style="border: 1px solid var(--ink-3); background: var(--ink-2); padding: 18px 22px; margin: 0 0 10px; display: grid; grid-template-columns: 200px 1fr 1fr; gap: 18px; opacity: 0.62;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; color: var(--ochre); margin-bottom: 4px;">TIER 2 · TMUX / IDE</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 22px; color: var(--parchment-2); line-height: 1.05;">Developer assistant</div>
+            </div>
+            <div>
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: #4caf50; margin-bottom: 8px;">CAN</div>
+              <div style="font-family: var(--body); font-size: 14px; color: var(--parchment-2); line-height: 1.5;">
+                edit files · run local tests · install packages · execute local shell
+              </div>
+            </div>
+            <div>
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: #e34a1e; margin-bottom: 8px;">CANNOT</div>
+              <div style="font-family: var(--body); font-size: 14px; color: var(--ochre); line-height: 1.5;">
+                push to git · open PRs · touch cloud · query any remote system
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 1: PRODUCTIVITY TOOL -->
+          <div style="border: 1px solid var(--ink-3); background: var(--ink-2); padding: 18px 22px; margin: 0 0 0; display: grid; grid-template-columns: 200px 1fr 1fr; gap: 18px; opacity: 0.46;">
+            <div>
+              <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; color: var(--ochre); margin-bottom: 4px;">TIER 1 · AUTOCOMPLETE</div>
+              <div style="font-family: var(--display); font-style: italic; font-size: 20px; color: var(--parchment-2); line-height: 1.05;">Productivity tool</div>
+            </div>
+            <div>
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: #4caf50; margin-bottom: 8px;">CAN</div>
+              <div style="font-family: var(--body); font-size: 14px; color: var(--parchment-2); line-height: 1.5;">
+                read code · suggest edits · explain symbols · in-IDE chat
+              </div>
+            </div>
+            <div>
+              <div style="font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.22em; color: #e34a1e; margin-bottom: 8px;">CANNOT</div>
+              <div style="font-family: var(--body); font-size: 14px; color: var(--ochre); line-height: 1.5;">
+                write files · run anything · network access · persistent state
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 18px; font-family: var(--mono); font-size: 9.5px; color: var(--ochre); letter-spacing: 2px; text-align: center;">
+            ↑ EACH ASCENT EXTENDS REAL ACCESS — AND REQUIRES REAL DISCIPLINE TO RECEIVE IT ↑
+          </div>
+        </div>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">THE RELUCTANCE</span>
+          Why organizations stop at Tier 2.
+        </h3>
+        <p>
+          The trust ceiling is rarely technical. It is institutional. Granting an LLM AWS credentials feels different from granting them to a new hire — even when the scope is identical, even when the audit trail is better. The reluctance comes from four honest fears: <em>what if it pushes bad code? what if it leaks credentials? what if it racks up AWS spend? what if it makes a destructive call?</em> Each one has a defensible answer in the dev loop's design, and the answer is the same answer you'd give for trusting a junior engineer — but the organizational muscle for giving that answer to an agent has not been built yet.
+        </p>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 40px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">WHAT MAKES IT SAFE</span>
+          The discipline that earns the access.
+        </h3>
+        <p>
+          The dev loop's discipline is what <strong>makes this trust safe to give</strong>. The same forcing functions that make the loop converge also constrain what the agents can do with the access they have. The Lead cannot write code — so it cannot push bad code itself, only via Generator output that the Validator must clear. The Validator fails closed — so a bad deploy never advances. Quotas bound per-loop AWS spend at the wall-clock budget. Audit trail traces every API call back to a task ID, an iteration, and a generator report. Filesystem state means tampered loop state is detectable on the next read. Every capability granted to the agents was earned by a corresponding constraint in the loop's structure.
+        </p>
+        <p>
+          The result is asymmetric: the agents have <em>more</em> traceability than a human engineer would. Every command, every read, every write is logged to a file that survives the session. The trust we extend is not blind. It is instrumented.
+        </p>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 40px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">WHAT WE STILL DO NOT GRANT</span>
+          Honest boundaries.
+        </h3>
+        <p>
+          Not everything. Production deploys require human plan approval — the Lead can propose, but a human merges to main and triggers the prod pipeline. Customer data is never reachable from the dev loop; even staging uses synthetic seed. Secrets rotation is a human-only ritual. New IAM role creation is a human-only ritual. Cost ceilings above the per-loop budget require human override. These are the same boundaries we would set for a junior engineer in their first six months — and for the same reasons. The agents are engineers, but they are not senior staff. Yet.
+        </p>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">THE KEYBOARD-LESS MOVE</span>
+          Speaking to my developer.
+        </h3>
+        <p>
+          There is one last vestige of the <em>"operating a tool"</em> posture: the keyboard. As long as you type commands at the agent, some part of your brain treats it as a system to be driven — a thing whose syntax you must remember and whose surface you must point at. Once you take the keyboard away — once you talk to it the way you talk to your team — the framing changes for good.
+        </p>
+        <p>
+          I do not type to direct the loop. I speak to it. <strong>Whisperflow</strong> takes voice and converts it to the prompt, on every device, anywhere I am — laptop closed, phone in hand, walking to coffee, on a call between meetings. The Lead receives spoken intent and converts it into plan drafts and task assignments. The keyboard becomes the exception, not the rule. <em>"Sumedha, the Validator flagged a tenant-isolation gap in the new connector — want me to re-plan?"</em> is met with a reply spoken out loud, not typed.
+        </p>
+        <p>
+          This sounds like a small change. It is not. The act of speaking to a colleague is psychologically different from the act of typing at a tool. Inflection lands. You give context. You think out loud. You phrase things in the way you would phrase them to a person standing next to you. The agent receives speech that has the shape of how an engineer would receive it from a teammate. That tiny shift compounds — after a week, you stop thinking of the agent as a thing you operate and start thinking of it as someone you work with.
+        </p>
+        <p>
+          This is the final piece of the mindset shift. Treating the agent like an engineer requires <em>acting</em> like it is one. Granting the access is half of it. Speaking to it instead of typing at it is the other half. Together, they complete the move from <strong>"my tool"</strong> to <strong>"my developer."</strong>
+        </p>
+
+        <p class="pullquote" style="margin: 56px 0;">
+          The dev loop is not a tool you supervise. It is an engineer you trust — granted real access, bounded by real discipline, addressed by voice. Once the team makes that move, the question stops being <em>"can we trust this?"</em> and starts being <em>"what's the next ceiling?"</em>
+        </p>
+      </section>
+
+      <!-- ===== Section 09 — REFLECTION ===== -->
+      <!-- ===== Section 10 — WORKSTATION ===== -->
+      <section class="sec" id="workstation">
+        <span class="sec__num">§ 10 — Workstation</span>
+        <h2 class="sec__head">The <em>self-hosted</em> engineer.</h2>
+
+        <p>
+          There is a machine. It sits in a room. It is on right now. It does not sleep when I do, it does not stop when I close my laptop, it does not care that I am six time zones away. A real engineer has a workstation — and so does this one. This is the physical layer of the mindset shift. Everything that came before — the trust, the rulebook, the substrate, the forcing functions — runs on hardware. The hardware is intentional. It is what makes <em>self-hosted</em> a literal description, not a metaphor.
+        </p>
+
+        <!-- THE WORKSTATION DIAGRAM -->
+        <div class="phase-section" style="padding: 30px 28px 28px;">
+          <div class="phase-section__label">FIG. 11 / THE WORKSTATION · REMOTE MAC · TAILSCALE · TMUX · AWS DEV</div>
+          <svg viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <marker id="arrowW" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#ff7a1a" />
+              </marker>
+              <marker id="arrowWDim" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#8a7e6a" />
+              </marker>
+              <pattern id="hex" x="0" y="0" width="40" height="34" patternUnits="userSpaceOnUse">
+                <polygon points="20,4 36,14 36,30 20,40 4,30 4,14" fill="none" stroke="#1f1a13" stroke-width="0.8" />
+              </pattern>
+            </defs>
+
+            <!-- ===== TOP ROW: user devices ===== -->
+            <!-- Phone (Houston) -->
+            <g transform="translate(180, 50)">
+              <rect x="0" y="0" width="64" height="100" rx="10" fill="#15110c" stroke="#8a7e6a" stroke-width="1.2"/>
+              <rect x="4" y="10" width="56" height="74" fill="#0c0a08" stroke="#1f1a13"/>
+              <circle cx="32" cy="92" r="3" fill="#1f1a13"/>
+              <text x="6" y="22" font-family="JetBrains Mono" font-size="7.5" fill="#5a5040">$ ssh nx</text>
+              <text x="6" y="34" font-family="JetBrains Mono" font-size="7.5" fill="#8a7e6a">PR-437</text>
+              <text x="6" y="46" font-family="JetBrains Mono" font-size="7.5" fill="#a3501a">validator</text>
+              <text x="6" y="58" font-family="JetBrains Mono" font-size="7.5" fill="#e34a1e">FAIL</text>
+              <text x="32" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a" letter-spacing="2">PHONE</text>
+              <text x="32" y="186" text-anchor="middle" font-family="Instrument Serif" font-size="16" fill="#ebe1cf" font-style="italic">Houston</text>
+            </g>
+
+            <!-- Laptop (in transit) -->
+            <g transform="translate(540, 50)">
+              <!-- closed laptop -->
+              <rect x="0" y="60" width="120" height="14" rx="3" fill="#15110c" stroke="#8a7e6a" stroke-width="1.2"/>
+              <rect x="40" y="64" width="40" height="3" fill="#1f1a13"/>
+              <rect x="6" y="0" width="108" height="62" rx="4" fill="#0c0a08" stroke="#8a7e6a" stroke-width="1"/>
+              <line x1="60" y1="0" x2="60" y2="62" stroke="#1f1a13" stroke-width="0.5"/>
+              <text x="60" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">LID CLOSED</text>
+              <text x="60" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a" letter-spacing="2">LAPTOP</text>
+              <text x="60" y="186" text-anchor="middle" font-family="Instrument Serif" font-size="16" fill="#ebe1cf" font-style="italic">in transit</text>
+            </g>
+
+            <!-- iPad (Singapore) -->
+            <g transform="translate(900, 50)">
+              <rect x="0" y="10" width="120" height="90" rx="8" fill="#15110c" stroke="#8a7e6a" stroke-width="1.2"/>
+              <rect x="6" y="16" width="108" height="78" fill="#0c0a08" stroke="#1f1a13"/>
+              <text x="14" y="34" font-family="JetBrains Mono" font-size="8" fill="#5a5040">whisperflow:</text>
+              <text x="14" y="48" font-family="JetBrains Mono" font-size="8" fill="#a3501a">"re-plan for the</text>
+              <text x="14" y="60" font-family="JetBrains Mono" font-size="8" fill="#a3501a">isolation gap"</text>
+              <text x="14" y="78" font-family="JetBrains Mono" font-size="8" fill="#ff7a1a">→ Lead drafting</text>
+              <text x="60" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a" letter-spacing="2">iPAD</text>
+              <text x="60" y="186" text-anchor="middle" font-family="Instrument Serif" font-size="16" fill="#ebe1cf" font-style="italic">Singapore</text>
+            </g>
+
+            <!-- ===== TAILSCALE MESH BAND ===== -->
+            <rect x="80" y="225" width="1040" height="60" fill="url(#hex)" opacity="0.7"/>
+            <rect x="80" y="225" width="1040" height="60" fill="none" stroke="#1f1a13" stroke-width="1"/>
+            <text x="600" y="248" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#a3501a" letter-spacing="4">TAILSCALE MESH</text>
+            <text x="600" y="270" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="3">PRIVATE NETWORK · IDENTITY-BOUND · ZERO PUBLIC EXPOSURE · WIREGUARD</text>
+
+            <!-- Mesh lines from devices to mac center -->
+            <line x1="212" y1="155" x2="500" y2="320" stroke="#a3501a" stroke-width="1" stroke-dasharray="2 4" opacity="0.7"/>
+            <line x1="600" y1="135" x2="600" y2="320" stroke="#ff7a1a" stroke-width="1.2" stroke-dasharray="2 4"/>
+            <line x1="960" y1="155" x2="700" y2="320" stroke="#a3501a" stroke-width="1" stroke-dasharray="2 4" opacity="0.7"/>
+
+            <!-- ===== THE MAC ===== -->
+            <g transform="translate(360, 320)">
+              <!-- Outer shell -->
+              <rect x="0" y="0" width="480" height="200" rx="6" fill="#15110c" stroke="#ff7a1a" stroke-width="1.6"/>
+              <!-- Label -->
+              <text x="20" y="26" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2.5">REMOTE MAC · MAC MINI · POWERED 24/7</text>
+              <text x="460" y="26" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="#a3501a" letter-spacing="2">UPTIME · 47d 12h</text>
+              <line x1="20" y1="38" x2="460" y2="38" stroke="#a3501a" stroke-width="0.6"/>
+
+              <!-- tmux session label -->
+              <text x="20" y="58" font-family="Instrument Serif" font-size="22" fill="#ebe1cf" font-style="italic">tmux: dev-loop</text>
+              <text x="20" y="76" font-family="JetBrains Mono" font-size="9.5" fill="#8a7e6a" letter-spacing="2">PERSISTENT SESSION · SURVIVES SSH DROP · SLEEP · WI-FI HANDOFF</text>
+
+              <!-- 3 tmux panes -->
+              <g transform="translate(20, 92)">
+                <!-- Pane 1: Lead -->
+                <rect x="0" y="0" width="140" height="88" fill="#0c0a08" stroke="#ff7a1a" stroke-width="1"/>
+                <rect x="0" y="0" width="140" height="14" fill="#1f1a13"/>
+                <text x="6" y="11" font-family="JetBrains Mono" font-size="8" fill="#ff7a1a" letter-spacing="1">PANE 1 · LEAD</text>
+                <text x="6" y="28" font-family="JetBrains Mono" font-size="7.5" fill="#ebe1cf">$ claude</text>
+                <text x="6" y="40" font-family="JetBrains Mono" font-size="7.5" fill="#8a7e6a">drafting</text>
+                <text x="6" y="52" font-family="JetBrains Mono" font-size="7.5" fill="#8a7e6a">task T-P12</text>
+                <text x="6" y="64" font-family="JetBrains Mono" font-size="7.5" fill="#a3501a">round 2 of 5</text>
+                <text x="6" y="80" font-family="JetBrains Mono" font-size="7.5" fill="#ff7a1a">▌</text>
+
+                <!-- Pane 2: logs -->
+                <rect x="150" y="0" width="140" height="88" fill="#0c0a08" stroke="#8a7e6a" stroke-width="1"/>
+                <rect x="150" y="0" width="140" height="14" fill="#1f1a13"/>
+                <text x="156" y="11" font-family="JetBrains Mono" font-size="8" fill="#8a7e6a" letter-spacing="1">PANE 2 · CW LOGS</text>
+                <text x="156" y="28" font-family="JetBrains Mono" font-size="7.5" fill="#5a5040">aws logs tail</text>
+                <text x="156" y="40" font-family="JetBrains Mono" font-size="7.5" fill="#5a5040">agentcore...</text>
+                <text x="156" y="52" font-family="JetBrains Mono" font-size="7.5" fill="#8a7e6a">14:22 spawn</text>
+                <text x="156" y="64" font-family="JetBrains Mono" font-size="7.5" fill="#8a7e6a">14:23 react</text>
+                <text x="156" y="76" font-family="JetBrains Mono" font-size="7.5" fill="#a3501a">14:24 tool</text>
+
+                <!-- Pane 3: monitor + break-glass -->
+                <rect x="300" y="0" width="140" height="88" fill="#0c0a08" stroke="#8a7e6a" stroke-width="1"/>
+                <rect x="300" y="0" width="140" height="14" fill="#1f1a13"/>
+                <text x="306" y="11" font-family="JetBrains Mono" font-size="8" fill="#8a7e6a" letter-spacing="1">PANE 3 · WATCH</text>
+                <text x="306" y="28" font-family="JetBrains Mono" font-size="7.5" fill="#5a5040">manifest.json</text>
+                <text x="306" y="40" font-family="JetBrains Mono" font-size="7.5" fill="#8a7e6a">phase: build</text>
+                <text x="306" y="52" font-family="JetBrains Mono" font-size="7.5" fill="#8a7e6a">iter: 2</text>
+                <text x="306" y="64" font-family="JetBrains Mono" font-size="7.5" fill="#8a7e6a">budget: 38m</text>
+                <text x="306" y="76" font-family="JetBrains Mono" font-size="7.5" fill="#e34a1e">kill: ^C ^C</text>
+              </g>
+            </g>
+
+            <!-- Connection: Mac → AWS dev -->
+            <path d="M 600 525 L 600 580" fill="none" stroke="#ff7a1a" stroke-width="1.4" stroke-dasharray="3 4" marker-end="url(#arrowW)"/>
+            <text x="610" y="555" font-family="JetBrains Mono" font-size="9" fill="#ff7a1a" letter-spacing="2">SCOPED IAM · DEV ONLY</text>
+
+            <!-- ===== AWS DEV CLUSTER ===== -->
+            <g transform="translate(220, 590)">
+              <rect x="0" y="0" width="760" height="86" fill="#15110c" stroke="#1f1a13" stroke-width="1"/>
+              <text x="20" y="22" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a" letter-spacing="2.5">AWS DEV ENVIRONMENT · us-east-1</text>
+              <line x1="20" y1="32" x2="740" y2="32" stroke="#1f1a13" stroke-width="0.6"/>
+
+              <!-- service tags -->
+              <g transform="translate(20, 44)" font-family="JetBrains Mono" font-size="10" letter-spacing="1">
+                <rect x="0"   y="0" width="100" height="32" fill="#0c0a08" stroke="#a3501a"/>
+                <text x="50"  y="14" text-anchor="middle" fill="#ebe1cf">ECS</text>
+                <text x="50"  y="26" text-anchor="middle" fill="#5a5040" font-size="8">runtime</text>
+
+                <rect x="110" y="0" width="120" height="32" fill="#0c0a08" stroke="#a3501a"/>
+                <text x="170" y="14" text-anchor="middle" fill="#ebe1cf">CloudWatch</text>
+                <text x="170" y="26" text-anchor="middle" fill="#5a5040" font-size="8">logs · x-ray</text>
+
+                <rect x="240" y="0" width="100" height="32" fill="#0c0a08" stroke="#a3501a"/>
+                <text x="290" y="14" text-anchor="middle" fill="#ebe1cf">DynamoDB</text>
+                <text x="290" y="26" text-anchor="middle" fill="#5a5040" font-size="8">sessions</text>
+
+                <rect x="350" y="0" width="110" height="32" fill="#0c0a08" stroke="#a3501a"/>
+                <text x="405" y="14" text-anchor="middle" fill="#ebe1cf">Aurora pgvec</text>
+                <text x="405" y="26" text-anchor="middle" fill="#5a5040" font-size="8">RAG</text>
+
+                <rect x="470" y="0" width="100" height="32" fill="#0c0a08" stroke="#a3501a"/>
+                <text x="520" y="14" text-anchor="middle" fill="#ebe1cf">Neptune</text>
+                <text x="520" y="26" text-anchor="middle" fill="#5a5040" font-size="8">FIBO KG</text>
+
+                <rect x="580" y="0" width="80" height="32" fill="#0c0a08" stroke="#a3501a"/>
+                <text x="620" y="14" text-anchor="middle" fill="#ebe1cf">Bedrock</text>
+                <text x="620" y="26" text-anchor="middle" fill="#5a5040" font-size="8">LLM</text>
+
+                <rect x="670" y="0" width="50" height="32" fill="#0c0a08" stroke="#a3501a"/>
+                <text x="695" y="14" text-anchor="middle" fill="#ebe1cf">S3</text>
+                <text x="695" y="26" text-anchor="middle" fill="#5a5040" font-size="8">artifacts</text>
+              </g>
+            </g>
+
+            <!-- Right-side annotation -->
+            <g transform="translate(880, 320)">
+              <text x="0" y="20" font-family="JetBrains Mono" font-size="9" fill="#a3501a" letter-spacing="2">∙ NEVER SLEEPS</text>
+              <text x="0" y="38" font-family="JetBrains Mono" font-size="9" fill="#a3501a" letter-spacing="2">∙ NEVER LOGS OFF</text>
+              <text x="0" y="56" font-family="JetBrains Mono" font-size="9" fill="#a3501a" letter-spacing="2">∙ SURVIVES TRAVEL</text>
+              <text x="0" y="74" font-family="JetBrains Mono" font-size="9" fill="#a3501a" letter-spacing="2">∙ REACHABLE FROM</text>
+              <text x="0" y="88" font-family="JetBrains Mono" font-size="9" fill="#a3501a" letter-spacing="2">  EVERY DEVICE I OWN</text>
+              <text x="0" y="112" font-family="JetBrains Mono" font-size="9" fill="#e34a1e" letter-spacing="2">∙ KILL SWITCH ALWAYS</text>
+              <text x="0" y="126" font-family="JetBrains Mono" font-size="9" fill="#e34a1e" letter-spacing="2">  ONE TAP AWAY</text>
+            </g>
+
+            <!-- Left-side annotation -->
+            <g transform="translate(80, 320)">
+              <text x="0" y="20" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ MAC MINI · 16GB</text>
+              <text x="0" y="38" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ SAME TOOLING AS</text>
+              <text x="0" y="52" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">  THE TEAM USES</text>
+              <text x="0" y="76" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ TAILSCALE NODE</text>
+              <text x="0" y="94" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ DAILY HEALTH CRON</text>
+              <text x="0" y="112" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ BILLING ALARM →</text>
+              <text x="0" y="126" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">  MY PHONE</text>
+            </g>
+          </svg>
+        </div>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">THE THREE LAYERS</span>
+          What the workstation actually is.
+        </h3>
+
+        <p>
+          <strong>The machine — a Mac.</strong> Mini, in our case, though any Mac with enough RAM works. Always powered. Always connected. Same dev tooling our team uses, same runtime quirks, same architecture. If a build works there, it works on every developer's Mac. The agent's workstation matches the team's workstation deliberately — there is no special hosted environment with different runtime behaviour, no sandbox that hides bugs the team would hit. The agent develops in the same conditions its work will land in.
+        </p>
+
+        <p>
+          <strong>The network — Tailscale.</strong> A mesh VPN with identity built in, zero public exposure, zero port forwarding. The Mac sits on a private network reachable from every device I own — laptop, phone, iPad, second laptop — and from nowhere else. Authentication is per-device. Revocation is one click. This is the same posture you would put a sensitive jumpbox in at a hedge fund: private subnet, identity-bound, audited at the edge. The agent runs where no random scanner on the public internet can ever reach it.
+        </p>
+
+        <p>
+          <strong>The session — tmux.</strong> A long-running multi-pane session that survives every kind of disruption: ssh drops, sleep cycles, laptop restarts, Wi-Fi changes, cellular handoffs. The Lead runs in one pane. A live monitor — tailing CloudWatch + watching <code>manifest.json</code> — runs in another. A break-glass shell waits in a third. Reconnect from anywhere and you are back at the same conversation, the prompt blinking exactly where you left it. tmux is the substrate that makes <em>continuity</em> not a wish but a property.
+        </p>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">WHAT THIS MEANS IN PRACTICE</span>
+          The travel story, literally.
+        </h3>
+        <p>
+          The travel story is no longer rhetorical. I sit down at my laptop in Houston, ssh into the Mac, the loop is mid-iteration — the Validator returned a FAIL on PR #437 fifteen minutes ago. I dictate a re-plan over Whisperflow. The Lead writes the next task. I close the laptop. I board a plane to Singapore. Fourteen hours later, I open my phone in baggage claim, ssh in via Tailscale, and the loop has shipped two more PRs to dev. By the time I am at the hotel, three features have progressed two iterations each. <strong>The workstation never stopped.</strong>
+        </p>
+        <p>
+          This is what <em>"AI software engineer"</em> means at full strength. Not a chatbot you query when you have a minute. Not an assistant that waits for prompts. An engineer with a workstation, on a network, in a persistent session — continuously available, continuously working, continuously reachable. The continuity is what makes the framing real. Without the always-on machine, the dev loop is a thing you start each morning. With it, the dev loop is something that runs alongside your life.
+        </p>
+
+        <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
+          <span style="font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--amber); letter-spacing: 0.22em; display: block; margin-bottom: 10px;">HONEST CONSTRAINTS</span>
+          What this is, and is not.
+        </h3>
+        <p>
+          What this is <em>not</em>: a production agent. The workstation runs dev loops, occasionally staging loops. It does not have prod IAM. It does not touch customer data. Its AWS spend is bounded by the per-loop budget, and the Mac has its own fail-safes — a daily restart cron, a billing alarm wired to my phone, a kill switch in a secondary tmux pane. If the loop misbehaves, I shut it down from anywhere in under a minute.
+        </p>
+        <p>
+          What this is also <em>not</em>: a recommendation that every team needs a Mac in a closet. The form factor is incidental. What matters is that the agent has <em>somewhere to run</em>, <em>something to run in</em>, and <em>a way to reach it from anywhere</em>. A cloud VM works. A Linux box in a rack works. A Mac in your home office works. The architecture matters more than the silicon.
+        </p>
+
+        <p class="pullquote" style="margin: 56px 0;">
+          A trusted engineer, granted real access, bounded by a written rulebook, addressed by voice, working from a persistent session on a workstation that never logs off. <em>That</em> is what we mean when we say <strong>self-hosted AI engineer</strong>. Not a tool you operate. A teammate with a desk.
+        </p>
+      </section>
+
+      <!-- ===== Section 11 — REFLECTION ===== -->
+      <section class="sec" id="deeper">
+        <span class="sec__num">§ 11 — Reflection</span>
+        <h2 class="sec__head">The deeper <em>resemblance</em>.</h2>
+
+        <p>
+          There is one more parallel worth naming explicitly. Nexus is governance-first, audit-everything, fail-closed, layer-isolated. The dev loop is the same architecture, applied to the act of building Nexus itself.
+        </p>
+
+        <!-- Symmetry diagram -->
+        <div class="symmetry">
+          <div class="symmetry__label">FIG. 12 / ARCHITECTURAL SYMMETRY · NEXUS ⇄ DEV LOOP</div>
+          <svg viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+                <line x1="0" y1="0" x2="0" y2="8" stroke="#1f1a13" stroke-width="2"/>
+              </pattern>
+            </defs>
+
+            <!-- Left column header -->
+            <text x="260" y="40" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#ff7a1a" letter-spacing="3">NEXUS · IN PRODUCTION</text>
+            <line x1="80" y1="56" x2="440" y2="56" stroke="#1f1a13"/>
+
+            <!-- Right column header -->
+            <text x="940" y="40" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#ff7a1a" letter-spacing="3">DEV LOOP · IN THE REPO</text>
+            <line x1="760" y1="56" x2="1120" y2="56" stroke="#1f1a13"/>
+
+            <!-- LEFT STACK: Governance, Persona, Memory, Data -->
+            <!-- Governance -->
+            <g>
+              <rect x="80" y="80" width="360" height="78" fill="#15110c" stroke="#ff7a1a" stroke-width="1.2"/>
+              <text x="98" y="106" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">LAYER 4</text>
+              <text x="98" y="132" font-family="Instrument Serif" font-size="28" fill="#ebe1cf" font-style="italic">Governance</text>
+              <text x="98" y="150" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">policy · audit · escalation · regulatory</text>
+            </g>
+            <!-- Persona -->
+            <g>
+              <rect x="80" y="172" width="360" height="78" fill="#15110c" stroke="#ebe1cf" stroke-width="1"/>
+              <text x="98" y="198" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf" letter-spacing="2">LAYER 3</text>
+              <text x="98" y="224" font-family="Instrument Serif" font-size="28" fill="#ebe1cf" font-style="italic">Persona / Agent Runtime</text>
+              <text x="98" y="242" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">ReAct loop · tools · context assembly</text>
+            </g>
+            <!-- Memory -->
+            <g>
+              <rect x="80" y="264" width="360" height="78" fill="#15110c" stroke="#ebe1cf" stroke-width="1" opacity="0.85"/>
+              <text x="98" y="290" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf" letter-spacing="2">LAYER 2</text>
+              <text x="98" y="316" font-family="Instrument Serif" font-size="28" fill="#ebe1cf" font-style="italic">Institutional Memory</text>
+              <text x="98" y="334" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">FIBO graph · retrieval · compounding</text>
+            </g>
+            <!-- Data -->
+            <g>
+              <rect x="80" y="356" width="360" height="78" fill="#15110c" stroke="#ebe1cf" stroke-width="1" opacity="0.7"/>
+              <text x="98" y="382" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf" letter-spacing="2">LAYER 1</text>
+              <text x="98" y="408" font-family="Instrument Serif" font-size="28" fill="#ebe1cf" font-style="italic">Data Unification</text>
+              <text x="98" y="426" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">connectors · CDC · canonical schema</text>
+            </g>
+
+            <!-- RIGHT STACK: Lead, Generator, Validator, Loop State -->
+            <!-- Lead -->
+            <g>
+              <rect x="760" y="80" width="360" height="78" fill="#15110c" stroke="#ff7a1a" stroke-width="1.2"/>
+              <text x="778" y="106" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">ORCHESTRATOR</text>
+              <text x="778" y="132" font-family="Instrument Serif" font-size="28" fill="#ebe1cf" font-style="italic">Lead</text>
+              <text x="778" y="150" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">plans · negotiates · routes · gates</text>
+            </g>
+            <!-- Generator -->
+            <g>
+              <rect x="760" y="172" width="360" height="78" fill="#15110c" stroke="#ebe1cf" stroke-width="1"/>
+              <text x="778" y="198" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf" letter-spacing="2">EXECUTOR</text>
+              <text x="778" y="224" font-family="Instrument Serif" font-size="28" fill="#ebe1cf" font-style="italic">Generator</text>
+              <text x="778" y="242" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">stateless · disposable · focused</text>
+            </g>
+            <!-- Validator -->
+            <g>
+              <rect x="760" y="264" width="360" height="78" fill="#15110c" stroke="#ebe1cf" stroke-width="1" opacity="0.85"/>
+              <text x="778" y="290" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf" letter-spacing="2">CRITIC</text>
+              <text x="778" y="316" font-family="Instrument Serif" font-size="28" fill="#ebe1cf" font-style="italic">Validator</text>
+              <text x="778" y="334" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">append-only verdicts · fail-closed</text>
+            </g>
+            <!-- State -->
+            <g>
+              <rect x="760" y="356" width="360" height="78" fill="#15110c" stroke="#ebe1cf" stroke-width="1" opacity="0.7"/>
+              <text x="778" y="382" font-family="JetBrains Mono" font-size="10" fill="#ebe1cf" letter-spacing="2">STATE</text>
+              <text x="778" y="408" font-family="Instrument Serif" font-size="28" fill="#ebe1cf" font-style="italic">Loop-state filesystem</text>
+              <text x="778" y="426" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a">plan · manifest · history · evals</text>
+            </g>
+
+            <!-- Connecting dashed lines + labels -->
+            <g stroke="#a3501a" stroke-width="0.9" stroke-dasharray="3 5" fill="none">
+              <line x1="440" y1="119" x2="760" y2="119"/>
+              <line x1="440" y1="211" x2="760" y2="211"/>
+              <line x1="440" y1="303" x2="760" y2="303"/>
+              <line x1="440" y1="395" x2="760" y2="395"/>
+            </g>
+
+            <text x="600" y="113" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#ff7a1a" letter-spacing="2">≡ ORCHESTRATES, NEVER REACHES IN</text>
+            <text x="600" y="205" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a3501a" letter-spacing="2">≡ STATELESS DOERS</text>
+            <text x="600" y="297" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a3501a" letter-spacing="2">≡ APPEND-ONLY EVIDENCE</text>
+            <text x="600" y="389" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a3501a" letter-spacing="2">≡ RECONSTRUCTABLE MEMORY</text>
+
+            <!-- Footer note -->
+            <text x="600" y="464" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#5a5040" letter-spacing="2">SAME SHAPE — DIFFERENT SUBSTRATE</text>
+          </svg>
+        </div>
+
+        <p>
+          The <strong>Lead is governance</strong>. It can stop any action, write any policy, but it cannot reach into the Generator's work directly. The <strong>Generator is the agent runtime</strong> — stateless, disposable, focused, reset between tasks. The <strong>Validator is the audit-and-policy enforcement layer</strong> — append-only verdicts, evidence-bearing, fail-closed. The <strong>plan, manifest, and history files</strong> are the institutional memory of the loop. Every iteration is reconstructable.
+        </p>
+
+        <p>
+          We build Nexus with the same shape Nexus exposes to its customers. That symmetry is not aesthetic. It is how a small team ships an institutional-grade platform — by trusting the discipline of the loop more than the talent of any single agent in it.
+        </p>
+
+        <p>
+          And that is the meaning of the shift. The agents we once treated as productivity tools are, on the other side of the dev loop, <strong>software engineers</strong>. They plan, they build, they critique, they re-plan. They run on a remote box over Tailscale while their architect is on a plane. The humans are not faster typists with a smarter assistant. The humans are architects, free to decide what should exist — while the factory hums.
+        </p>
+      </section>
+
+    </div>
+
+    <!-- RIGHT RAIL -->
+    <aside class="article__rail article__rail--right">
+      <div class="rail-item">
+        <b>Pattern lineage</b>
+        ReAct · LLM-as-judge<br/>
+        Multi-agent orchestration<br/>
+        Plan-then-execute<br/>
+        TDD · Fresh context windows<br/>
+        Asymmetric reward shaping
+      </div>
+      <div class="rail-item">
+        <b>Hard rules</b>
+        ∙ Lead writes no code<br/>
+        ∙ Workers spawn fresh<br/>
+        ∙ Persistence-layer evidence<br/>
+        ∙ ADR-0066 agent-first<br/>
+        ∙ Phase 0 stack ritual
+      </div>
+      <div class="rail-item">
+        <b>Adjacent reading</b>
+        ADR-0064 — Devil's Advocate<br/>
+        ADR-0065 — Chat-first model<br/>
+        ADR-0066 — Agent-first / REST<br/>
+        Spec 05 — Agent Runtime<br/>
+        Spec 09 — Audit & Compliance
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- ========== FOOTER / COLOPHON =================================== -->
+  <footer class="colophon">
+    <div>
+      <b>Colophon</b>
+      <p>
+        Typography: Instrument Serif &amp; Newsreader for prose; JetBrains Mono
+        for technical labels. Schematics hand-authored in SVG. The grain
+        overlay is a fractal-noise filter, not an image — it scales with
+        the viewport. Designed for slow reading.
+      </p>
+    </div>
+    <div>
+      <b>Imprint</b>
+      <p>
+        Nexus — the institutional identity, memory, and governance layer
+        that turns generic AI into trusted financial agents.
+        <br/><br/>
+        © 2026 RTA Labs · Houston, TX<br/>
+        Engineering Journal · Note 03 · 2026.06.03
+      </p>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // Scroll progress indicator
+  const bar = document.getElementById('phaseBar');
+  const update = () => {
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+    bar.style.width = (scrolled * 100) + '%';
+  };
+  document.addEventListener('scroll', update, { passive: true });
+  update();
+</script>
+
+</body>
+</html>

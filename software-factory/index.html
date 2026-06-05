@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>The Dev Loop — Engineering Note 03 (Light) · Nexus by RTA Labs</title>
+<title>The Dev Loop — Engineering Note 03 (Light) · Nexentra by RTA Labs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -1097,7 +1097,7 @@
         <h2 class="sec__head">Inside the <em>factory</em>.</h2>
 
         <p>
-          What we run in this repo to ship features into Nexus. Three roles, one reward function each, tightly scoped. State lives on disk under <code>.claude/loop-state/</code>: plan, approved plan, current task, manifest, generator reports, history. If you can't see it in a file, it isn't real. Stop a loop, walk away, pick it up later exactly where it was — and when something goes weird, the trail is right there.
+          What we run in this repo to ship features into Nexentra. Three roles, one reward function each, tightly scoped. State lives on disk under <code>.claude/loop-state/</code>: plan, approved plan, current task, manifest, generator reports, history. If you can't see it in a file, it isn't real. Stop a loop, walk away, pick it up later exactly where it was — and when something goes weird, the trail is right there.
         </p>
 
         <div class="role-table">
@@ -1267,7 +1267,7 @@
         </p>
 
         <p>
-          One more rule. If a plan touches domain data and proposes REST instead of an agent tool, it needs an explicit <strong>ADR-0066 exception block</strong>. Nexus is agent-first, and "REST by default" doesn't ship here — the loop catches it before architecture review ever has to.
+          One more rule. If a plan touches domain data and proposes REST instead of an agent tool, it needs an explicit <strong>ADR-0066 exception block</strong>. Nexentra is agent-first, and "REST by default" doesn't ship here — the loop catches it before architecture review ever has to.
         </p>
       </section>
 
@@ -2012,7 +2012,7 @@
           Speaking to my developer.
         </h3>
         <p>
-          The last "I'm operating a tool" instinct lives in the keyboard. As long as you're typing commands, part of your brain treats the agent like a system to be driven. So I stopped. <strong>Whisperflow</strong> takes my voice and turns it into a prompt on whatever device I have — laptop closed, phone in hand, walking to coffee. The Lead turns spoken intent into plan drafts and tasks.
+          The last "I'm operating a tool" instinct lives in the keyboard. As long as you're typing commands, part of your brain treats the agent like a system to be driven. So I stopped. <strong>Whisperflow</strong> takes my voice and turns it into a prompt — laptop open, lid closed, walking to coffee, on a call between meetings. The Lead turns spoken intent into plan drafts and tasks.
         </p>
         <p>
           Talking to a colleague is different from typing at a tool. Inflection lands, context comes naturally, you think out loud. After a week, the agent stops feeling like something you operate and starts feeling like someone you work with. Real access is half the shift; talking to it is the other half. "My tool" becomes "my developer," and you don't go back.
@@ -2050,17 +2050,18 @@
             </defs>
 
             <!-- ===== TOP ROW: user devices ===== -->
-            <!-- Phone (Houston) -->
-            <g transform="translate(180, 50)">
-              <rect x="0" y="0" width="64" height="100" rx="10" fill="#15110c" stroke="#8a7e6a" stroke-width="1.2"/>
-              <rect x="4" y="10" width="56" height="74" fill="#0c0a08" stroke="#1f1a13"/>
-              <circle cx="32" cy="92" r="3" fill="#1f1a13"/>
-              <text x="6" y="22" font-family="JetBrains Mono" font-size="7.5" fill="#5a5040">$ ssh nx</text>
-              <text x="6" y="34" font-family="JetBrains Mono" font-size="7.5" fill="#8a7e6a">PR-437</text>
-              <text x="6" y="46" font-family="JetBrains Mono" font-size="7.5" fill="#a3501a">validator</text>
-              <text x="6" y="58" font-family="JetBrains Mono" font-size="7.5" fill="#e34a1e">FAIL</text>
-              <text x="32" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a" letter-spacing="2">PHONE</text>
-              <text x="32" y="186" text-anchor="middle" font-family="Instrument Serif" font-size="16" fill="#ebe1cf" font-style="italic">Houston</text>
+            <!-- Laptop (Houston) -->
+            <g transform="translate(150, 70)">
+              <!-- open laptop, lid up -->
+              <rect x="6" y="0" width="108" height="56" rx="4" fill="#0c0a08" stroke="#8a7e6a" stroke-width="1"/>
+              <rect x="0" y="56" width="120" height="14" rx="3" fill="#15110c" stroke="#8a7e6a" stroke-width="1.2"/>
+              <rect x="40" y="60" width="40" height="3" fill="#1f1a13"/>
+              <text x="14" y="14" font-family="JetBrains Mono" font-size="8" fill="#5a5040">$ ssh nx</text>
+              <text x="14" y="26" font-family="JetBrains Mono" font-size="8" fill="#8a7e6a">PR-437</text>
+              <text x="14" y="38" font-family="JetBrains Mono" font-size="8" fill="#a3501a">validator</text>
+              <text x="14" y="50" font-family="JetBrains Mono" font-size="8" fill="#e34a1e">FAIL</text>
+              <text x="60" y="150" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8a7e6a" letter-spacing="2">LAPTOP</text>
+              <text x="60" y="166" text-anchor="middle" font-family="Instrument Serif" font-size="16" fill="#ebe1cf" font-style="italic">Houston</text>
             </g>
 
             <!-- Laptop (in transit) -->
@@ -2094,7 +2095,7 @@
             <text x="600" y="270" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="3">PRIVATE NETWORK · IDENTITY-BOUND · ZERO PUBLIC EXPOSURE · WIREGUARD</text>
 
             <!-- Mesh lines from devices to mac center -->
-            <line x1="212" y1="155" x2="500" y2="320" stroke="#a3501a" stroke-width="1" stroke-dasharray="2 4" opacity="0.7"/>
+            <line x1="210" y1="145" x2="500" y2="320" stroke="#a3501a" stroke-width="1" stroke-dasharray="2 4" opacity="0.7"/>
             <line x1="600" y1="135" x2="600" y2="320" stroke="#ff7a1a" stroke-width="1.2" stroke-dasharray="2 4"/>
             <line x1="960" y1="155" x2="700" y2="320" stroke="#a3501a" stroke-width="1" stroke-dasharray="2 4" opacity="0.7"/>
 
@@ -2206,7 +2207,7 @@
               <text x="0" y="76" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ TAILSCALE NODE</text>
               <text x="0" y="94" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ DAILY HEALTH CRON</text>
               <text x="0" y="112" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ BILLING ALARM →</text>
-              <text x="0" y="126" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">  MY PHONE</text>
+              <text x="0" y="126" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">  ALERTS ME</text>
             </g>
           </svg>
         </div>
@@ -2233,7 +2234,7 @@
           The travel story, literally.
         </h3>
         <p>
-          The travel story is what a Tuesday looks like. Laptop in Houston, ssh into the Mac, the loop is mid-iteration — Validator FAILed PR #437 fifteen minutes ago. Dictate a re-plan over Whisperflow. Lead writes the next task. Close the laptop, get in the car, drive to Austin. Three hours later I'm at a gas station off I-10, open my phone, ssh in over Tailscale — two more PRs shipped to dev. By the time I roll into Austin, three features have each moved forward two iterations. The workstation never stopped.
+          The travel story is what a Tuesday looks like. Laptop in Houston, ssh into the Mac, the loop is mid-iteration — Validator FAILed PR #437 fifteen minutes ago. Dictate a re-plan over Whisperflow. Lead writes the next task. Close the laptop, get in the car, drive to Austin. Three hours later I'm at a gas station off I-10, open my laptop, ssh in — two more PRs shipped to dev. By the time I roll into Austin, three features have each moved forward two iterations. The workstation never stopped.
         </p>
         <p>
           This is what "AI software engineer" at full strength means. Not a chatbot you ping. Not an assistant idle until prompted. An engineer with a workstation, on a network, in a persistent session — always available, always working. Without the always-on machine, the dev loop is something you start each morning. With it, it runs alongside your life.
@@ -2244,7 +2245,7 @@
           What this is, and is not.
         </h3>
         <p>
-          Two things this is not. Not a production agent — the workstation runs dev (and occasionally staging) loops, no prod IAM, no customer data. AWS spend is capped by the per-loop budget. Fail-safes are a daily restart cron, a billing alarm wired to my phone, and a kill switch in a secondary tmux pane. I can shut the loop down from anywhere in under a minute.
+          Two things this is not. Not a production agent — the workstation runs dev (and occasionally staging) loops, no prod IAM, no customer data. AWS spend is capped by the per-loop budget. Fail-safes are a daily restart cron, a billing alarm that pings me, and a kill switch in a secondary tmux pane. I can shut the loop down from anywhere in under a minute.
         </p>
         <p>
           Also not a recommendation that every team needs a Mac in a closet. The form factor is incidental. What matters: somewhere to run, something to run in, a way to reach it from anywhere. Cloud VM works. Linux box in a rack works. Mac in a home office works. Copy the architecture, not the silicon.
@@ -2261,7 +2262,7 @@
         <h2 class="sec__head">The deeper <em>resemblance</em>.</h2>
 
         <p>
-          One more parallel. Nexus is governance-first, audit-everything, fail-closed, layer-isolated. The dev loop is the same architecture, turned around and applied to the act of building Nexus. The same shape builds the thing we sell.
+          One more parallel. Nexentra is governance-first, audit-everything, fail-closed, layer-isolated. The dev loop is the same architecture, turned around and applied to the act of building Nexentra. The same shape builds the thing we sell.
         </p>
 
         <!-- Symmetry diagram -->
@@ -2365,7 +2366,7 @@
         </p>
 
         <p>
-          We build Nexus with the same shape Nexus exposes to its customers. The symmetry isn't aesthetic — it's how a small team ships an institutional-grade platform. Trust the discipline of the loop more than the talent of any one agent in it.
+          We build Nexentra with the same shape Nexentra exposes to its customers. The symmetry isn't aesthetic — it's how a small team ships an institutional-grade platform. Trust the discipline of the loop more than the talent of any one agent in it.
         </p>
 
         <p>
@@ -2419,7 +2420,7 @@
     <div>
       <b>Imprint</b>
       <p>
-        Nexus — the institutional identity, memory, and governance layer
+        Nexentra — the institutional identity, memory, and governance layer
         that turns generic AI into trusted financial agents.
         <br/><br/>
         © 2026 RTA Labs · Houston, TX<br/>

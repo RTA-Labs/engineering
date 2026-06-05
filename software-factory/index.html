@@ -486,6 +486,7 @@
   .pattern-table {
     margin: 32px 0;
     border: 1px solid var(--ink-3);
+    background: var(--ink);
   }
   .pattern-row {
     display: grid;
@@ -731,9 +732,9 @@
     <div class="kicker fade fade-1">FIELD NOTE — A SHIFT IN HOW WE BUILD SOFTWARE</div>
     <h1 class="hero__title fade fade-2">The <em>Software</em><br/>Factory.</h1>
     <p class="hero__sub fade fade-3">
-      From a single Claude terminal to a three-agent autonomous loop —
-      and what changes when AI stops being a productivity tool
-      and starts becoming a software engineer.
+      How we went from one Claude terminal to a three-agent loop that runs by itself —
+      and what shifts in your head when the AI stops feeling like a productivity tool
+      and starts feeling like a coworker.
     </p>
 
     <div class="hero__meta">
@@ -877,11 +878,11 @@
     <div class="article__body">
 
       <p class="lede">
-        The shift is not subtle. AI coding agents were sold to us as productivity tools — a sharper autocomplete, a faster rubber duck. What we have built instead is a software factory: a self-running, self-correcting build cycle in which the agents are not assistants but engineers, and the humans are not operators but architects.
+        AI coding agents were pitched to us as productivity tools. A sharper autocomplete. A faster rubber duck. That isn't what we ended up with. What we run now is closer to a factory: a build cycle that runs and corrects itself, where the agents do the engineering work and the humans are mostly making architecture calls.
       </p>
 
       <p>
-        How we got here is a story of five stages, each one expanding what it meant for an agent to do work. The dev loop — the autonomous three-agent cycle running inside this repo today — is the current frontier of that arc, and the resemblance to Claude's own design language is not a coincidence.
+        We didn't get there in one jump. There were five stages, and each one quietly stretched what we trusted an agent to actually do. The three-agent loop running in this repo today is where that arc has landed so far. It looks a lot like how Anthropic builds Claude itself, which I don't think is an accident.
       </p>
 
       <!-- ===== Section 01 — THE JOURNEY ===== -->
@@ -890,7 +891,7 @@
         <h2 class="sec__head">From <em>terminal</em> to factory.</h2>
 
         <p>
-          Five stages. Each one is a real configuration we ran. The progression is not an idea — it is what a small founding team actually does when it tries to make AI coding agents do load-bearing work.
+          There were five stages, and we actually ran each one. This isn't a tidy framework I came up with after the fact. It's what happens when a small team keeps trying to get AI coding agents to carry real weight, and the setup keeps reshaping itself underneath you.
         </p>
 
         <!-- 5-STAGE JOURNEY DIAGRAM -->
@@ -1055,39 +1056,39 @@
           01 · The pair programmer
         </h3>
         <p>
-          A single terminal. One developer, one Claude session. You ask, it answers. The agent is a tool — a better grep, a faster typist, a sharper rubber duck. Productivity goes up. The development model does not change. The human is still inside every iteration of the build cycle, because there is no build cycle yet — only a conversation.
+          One terminal, one developer, one Claude session. You ask, it answers. It's a nicer grep, a faster typist, a rubber duck that talks back. You get more done in a day, but the way you build software hasn't really changed. You're still in the middle of every step. There's no build cycle yet — just a conversation that happens to be useful.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
           02 · The workshop
         </h3>
         <p>
-          tmux. Four panes, four Claude sessions, four threads of work in flight. You context-switch between them, dispatching one task here, reading a report there. Each session is still a pair-programming session — you are just running four of them in parallel. The bottleneck has moved from <em>"Claude's typing speed"</em> to <em>"your attention."</em> Real, but not transformative.
+          tmux. Four panes, four Claude sessions, four things going at once. You hop between them: kick off a task here, read a report there, glance at the third one. Each pane is still a pair-programming session, you're just running them in parallel. The slowest thing in the room used to be how fast Claude could type. Now it's how fast you can pay attention. That's a real upgrade, but it isn't the moment things change.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
           03 · The wire
         </h3>
         <p>
-          tmux can pipe a keystroke from one pane into another. <code>tmux send-keys -t pane-B "&lt;message&gt;" Enter</code>. Suddenly the sessions can talk — programmatically — and a small operator script can broker the conversation. You step out of the loop for short stretches. The agents do not <em>know</em> they are talking to each other, but you have built a crude nervous system between them. This is the first stage where work happens without you watching every keystroke.
+          Turns out tmux can shove a keystroke from one pane into another. <code>tmux send-keys -t pane-B "&lt;message&gt;" Enter</code>. With that one trick, the sessions can talk, and a small operator script can sit in the middle relaying messages. For the first time, you can walk away for a few minutes and come back to find work has happened. The agents don't know they're talking to each other, but you've stitched a crude nervous system between them. That's the first stage where the keyboard isn't load-bearing.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
           04 · The org chart
         </h3>
         <p>
-          Claude agent teams. Formal multi-agent orchestration with shared task lists, addressable teammates, scoped permissions, lifecycle events. The lead and the specialists now <em>know</em> they are a team. <code>SendMessage</code> replaces the send-keys hack. The operator script becomes structure. This is where the org chart shows up in software — a chief architect with seven specialists, a VP of engineering with six team leads, each lead with their own developers. The team metaphor stops being a metaphor.
+          Then Claude agent teams arrive: real multi-agent orchestration, with shared task lists, agents who can address each other by name, scoped permissions, lifecycle events. The send-keys hack becomes <code>SendMessage</code>. The operator script becomes proper structure. And the lead and the specialists actually know they're on a team. This is the point where the org chart shows up inside the software: a chief architect with seven specialists, a VP of engineering with six team leads, each lead with their own developers. The team metaphor stops being a metaphor.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
           05 · The factory
         </h3>
         <p>
-          The autonomous dev loop. <strong>Lead, Generator, Validator</strong> — fresh context windows, asymmetric reward functions, hard scope boundaries, plan-negotiation rounds, persistence-layer verdicts, post-task diff checks. The human steps out of the build cycle entirely for hours at a time. The agents are not assistants. They are engineers. The factory has a substrate too — a remote machine over <strong>Tailscale</strong>, with the loop pinned inside a long-lived <code>tmux</code> session. I close my laptop. I get in the car. The loop keeps running. Validator FAILs catch their own bugs. The Lead writes the next task. By the time I arrive, three features have progressed two iterations each, and the only thing waiting for me is taste calls — the inflection points that actually require a human.
+          And then there's the dev loop. <strong>Lead, Generator, Validator</strong>, each in its own fresh context window, with different incentives, hard scope limits, plan rounds that have to be negotiated, real verdicts written to a persistence layer, and a diff check after every task. The human is just gone from the build cycle for hours at a time. The agents aren't assisting anymore. They're doing the work. The loop has a home, too: a remote machine on <strong>Tailscale</strong>, pinned inside a long-lived <code>tmux</code> session. I close my laptop. I get in the car. The loop keeps going. The Validator catches its own bugs, the Lead writes the next task, and by the time I arrive three features have moved forward two iterations each. The only things left for me are the calls only I can make.
         </p>
 
         <p class="pullquote" style="margin: 40px 0;">
-          The agents code while I travel. That sentence used to be a joke. It is now the operating posture.
+          The agents code while I travel. That used to be a joke. Now it's just how the day works.
         </p>
       </section>
 
@@ -1097,7 +1098,7 @@
         <h2 class="sec__head">Inside the <em>factory</em>.</h2>
 
         <p>
-          The dev loop is the automated development cycle we run inside this repo to ship features into Nexus. Three roles, each with a single reward function, each with a strictly bounded scope. The entire state lives on disk under <code>.claude/loop-state/</code> — <code>plan.md</code>, <code>plan-approved.md</code>, <code>current-task.md</code>, <code>manifest.json</code>, generator reports, history. Nothing is implicit. A loop is resumable, observable, and auditable.
+          The dev loop is what we actually run inside this repo to ship features into Nexus. Three roles, one reward function each, scoped to within an inch of their lives. All the state lives on disk under <code>.claude/loop-state/</code>: the plan, the approved plan, the current task, a manifest, generator reports, history. If you can't see it in a file, it isn't real. That means you can stop a loop, walk away, come back later, and pick it up exactly where it was — and if something goes weird, the trail is right there.
         </p>
 
         <div class="role-table">
@@ -1134,7 +1135,7 @@
         </div>
 
         <p>
-          The Lead is the only long-running session. The others are spawned fresh — clean context windows, no memory of prior iterations — and they exit when the task is done. This is the load-bearing structural choice.
+          Only the Lead sticks around. Everyone else gets spawned fresh — clean context, no memory of what happened last round — and shuts down the moment their task is finished. If you take one thing away from this whole document, take that. It's the choice that holds everything else up.
         </p>
       </section>
 
@@ -1144,7 +1145,7 @@
         <h2 class="sec__head">Why we <em>built</em> it.</h2>
 
         <p>
-          The dev loop solves four failure modes we kept hitting with ad-hoc agent use. Each one looks small in isolation; together they compound into the difference between a platform that ships and a platform that decays.
+          We didn't design the loop on a whiteboard. It grew out of four specific ways that ad-hoc agent use kept burning us. Any one of them looks survivable. Stack them on top of each other for a few weeks and the difference is between a platform that ships and a platform that quietly rots.
         </p>
 
         <div class="failures">
@@ -1177,7 +1178,7 @@
         <h2 class="sec__head">How it <em>accelerates</em>.</h2>
 
         <p>
-          Acceleration is not raw throughput. It is compounding small disciplines. Five phases run on every feature, in order, with hard gates between each.
+          Speed doesn't come from raw throughput. It comes from doing a handful of small things consistently and not skipping any of them. Every feature goes through the same five phases, in order, with real gates between them. If a phase fails its gate, the loop doesn't get to keep going just because it's already a few hours in.
         </p>
 
         <div class="phase-section">
@@ -1263,17 +1264,17 @@
         </div>
 
         <p>
-          The same <code>.feature</code> file runs at <code>localhost:3001</code> and against <code>app.dev.nexentra.ai</code>. No duplicate suites. Differences — auth, seed data — live in test helpers. The plan can never silently widen scope beyond what was approved; the Validator runs a diff check, and any file touched outside the approved list fails the build.
+          The same <code>.feature</code> file runs locally at <code>localhost:3001</code> and against <code>app.dev.nexentra.ai</code>. One suite, two environments — the differences in auth and seed data sit in test helpers, not in duplicated tests. And the plan can't quietly grow: after each task, the Validator runs a diff check, and if any file outside the approved list was touched, the build fails on the spot.
         </p>
 
         <p>
-          Plans touching domain data are required to include an explicit <strong>ADR-0066 exception block</strong> if they propose a REST surface instead of an agent tool. The loop refuses to deploy "REST as default" — Nexus is an agent-first platform, and the build cycle enforces that posture before the architecture review ever has to.
+          One more rule worth calling out. If a plan touches domain data and proposes a REST surface instead of an agent tool, it has to include an explicit <strong>ADR-0066 exception block</strong>. Nexus is an agent-first platform, and "REST by default" doesn't ship here. The loop catches that before it ever reaches an architecture review.
         </p>
       </section>
 
       <!-- ===== Pullquote ===== -->
       <p class="pullquote">
-        Plan negotiation first, code last. More time on what to build and whether it works; less time on what an LLM does badly anyway — context juggling, half-remembered mistakes, premature fixes.
+        Plan first, code last. Spend the time on what you're building and whether it actually works. Spend less of it on the things LLMs are bad at anyway: juggling context, half-remembering yesterday's bug, fixing things that were never broken.
       </p>
 
       <!-- ===== Section 04 ===== -->
@@ -1283,7 +1284,7 @@
         <h2 class="sec__head">Files as the loop's <em>memory</em>.</h2>
 
         <p>
-          The Lead does not pass tasks to the Generator through agent context. The Validator does not return verdicts through agent context. Every message between every actor in the loop is a file on disk. This was a structural decision and it is the load-bearing one — without it, none of the rest of the loop would survive a real working week.
+          The Lead never hands a task to the Generator through agent context. The Validator never returns a verdict through agent context. Every message between everyone in the loop is a file on disk. This sounds like a small implementation detail. It isn't. It's the thing the rest of the loop is bolted to. Take it out and nothing else in here survives a real working week.
         </p>
 
         <!-- File tree visual -->
@@ -1305,7 +1306,7 @@
         </div>
 
         <p>
-          The Lead writes; subagents read. The Lead's task handover to the Generator is a single file — <code>current-task.md</code> — containing task ID, mode (build or debug), declared file list, acceptance criteria, and references to <code>plan-approved.md</code>. The Generator is spawned, reads the file, does the work, writes a report, dies. The Validator follows the same pattern in reverse: read the report and the diff, write a verdict, die. The Lead, the only continuously-running session, reads those reports between iterations and writes the next task.
+          The Lead writes, the subagents read. The handover from Lead to Generator is one file — <code>current-task.md</code> — with a task ID, mode (build or debug), the files the task is allowed to touch, the acceptance criteria, and a reference back to <code>plan-approved.md</code>. The Generator spawns, reads it, works, writes its report, exits. The Validator does the same thing in the other direction: reads the report and the diff, writes a verdict, exits. The Lead is the only thing that sticks around, and its whole job between iterations is to read those reports and write the next task.
         </p>
 
         <!-- Swim-lane sequence diagram -->
@@ -1407,7 +1408,7 @@
         </div>
 
         <p>
-          Five effects fall out, and they are why the substrate is the quiet hero of the dev loop.
+          Once you commit to that, a handful of nice things just fall out of the design. None of them are clever. None of them required new infrastructure. They're the reason the substrate is, quietly, the part of the loop I'd lose last.
         </p>
 
         <div class="failures">
@@ -1449,10 +1450,10 @@
           How the human actually reads it.
         </h3>
         <p>
-          Every plan, every spec, every design ships in two forms: <code>plan.md</code> for the loop itself, and <code>plan.html</code> for human reading. The HTML versions are rendered with the same visual rigor as the article you are reading — diagrams, tables, hierarchy, semantic structure, color-coded sections.
+          Every plan, spec, and design ships in two formats: <code>plan.md</code> for the loop, and <code>plan.html</code> for whoever is reading it. The HTML version gets the same treatment as the page you're looking at right now — diagrams in line, real tables, visual hierarchy, color-coded sections. Same content, different reading experience.
         </p>
         <p>
-          This is the principle Tariq (<a href="https://thariqs.github.io/html-effectiveness/" style="color: var(--amber); text-decoration: none; border-bottom: 1px solid var(--amber-dim);">HTML Effectiveness</a>) documents exhaustively across twenty examples. His central claim — <em>"diffs and call-graphs are spatial information; markdown flattens them"</em> — is exactly the failure mode the dev loop kept hitting before we adopted the dual-format rule. A 1,500-line markdown plan gets <strong>skimmed</strong>. The same content rendered as a structured HTML document, with the architecture diagram on the page and the acceptance criteria in a styled table, gets <strong>actually read</strong>.
+          This is the argument Tariq makes in <a href="https://thariqs.github.io/html-effectiveness/" style="color: var(--amber); text-decoration: none; border-bottom: 1px solid var(--amber-dim);">HTML Effectiveness</a>, with twenty worked examples to back it up. His line is <em>"diffs and call-graphs are spatial information; markdown flattens them,"</em> and that was exactly what kept tripping us up. A 1,500-line markdown plan gets skimmed, no matter how good the writing is. The same content rendered as a proper document — diagram on the page, criteria in a styled table — gets read all the way through.
         </p>
 
         <!-- before/after callout -->
@@ -1477,10 +1478,10 @@
         </div>
 
         <p>
-          The Validator's plan-review quality improved measurably the week we shipped this. Fewer clarification rounds. More substantive critique. Faster convergence to PLAN-APPROVED. Tariq's argument is right; we built our build cycle around it.
+          The week we shipped this, the Validator's plan reviews got noticeably better. Fewer clarifying questions. Sharper critiques. Plans hit PLAN-APPROVED faster. Tariq is right, and we restructured our build cycle to take advantage of it.
         </p>
         <p>
-          The combination — <strong>plans on disk, rendered as HTML, reviewed by a fresh-context Validator</strong> — is what made the loop go from interesting experiment to operational substrate. Filesystem state is how the loop remembers. HTML rendering is how the human reads. Both were retrofits. Both were quiet, structural improvements that changed everything downstream.
+          The combination — <strong>plans on disk, rendered as HTML, reviewed by a fresh-context Validator</strong> — is the thing that moved the loop from "interesting experiment" to something we actually rely on. The filesystem is how the loop remembers. The HTML is how the human reads. Neither was in the original design. Both were retrofits, and both changed everything downstream of them.
         </p>
       </section>
 
@@ -1490,7 +1491,7 @@
         <h2 class="sec__head">Why it <em>actually</em> works.</h2>
 
         <p>
-          Three structural choices look like operational details but actually carry the weight. They are not features of the loop. They are <em>why</em> the loop works. Strip any one of them and the whole apparatus regresses to "agents wandering with good intentions."
+          A few of the things that look like minor implementation details are actually the reason any of this works. They aren't features of the loop, they're the load-bearing decisions underneath it. Pull any one of them out and the whole setup slides back to "agents wandering around with good intentions."
         </p>
 
         <!-- Forcing function 01 -->
@@ -1499,13 +1500,13 @@
           The two-actor adversarial plan review.
         </h3>
         <p>
-          The Lead drafts a plan. The Validator — a fresh context with no incentive to defend the Lead's reasoning — critiques it. The Lead revises. Up to five rounds. This is not a code review. It is a <strong>plan review, before any code is written</strong>. Two consequences fall out, and both materially raise the quality of every spec, every design, and every acceptance criterion that follows.
+          The Lead drafts a plan. The Validator — fresh context, no skin in the Lead's reasoning — tears into it. The Lead revises. Up to five rounds. This isn't a code review; it's a <strong>plan review, before any code exists</strong>. Two things come out of it that quietly raise the quality of every spec, design, and acceptance criterion downstream.
         </p>
         <p>
-          Ambiguity surfaces immediately. A vague acceptance criterion is the easiest thing to attack, so the Validator attacks it. The Lead either sharpens it into something machine-checkable or removes it. By round three, the plan has been pruned to claims that can be defended against an adversarial reader. The result is not consensus — it is a plan whose <em>weak parts have been named</em>.
+          First, the soft spots in a plan show up fast. Vague acceptance criteria are the easiest target, so that's what the Validator goes after first. The Lead either makes them concrete enough that a machine can check them, or drops them. By round three, what's left is a plan whose weak parts have been named out loud. You don't get consensus — you get something better, which is a plan where everyone knows where the risk lives.
         </p>
         <p>
-          The economics matter. Critique costs token-pennies; correcting a wrong implementation costs a re-spawn, a re-deploy, an evening. We pay for plan-quality at the cheap end of the loop, where it is most affordable. This is the same instinct as the Devil's Advocate gate in ADR-0064 — two-actor debate is the architectural answer to <em>"how do we make an LLM disagree with itself usefully?"</em>
+          And it's cheap. A round of critique is pennies of tokens. Catching the same mistake during implementation costs a re-spawn, a re-deploy, half an evening. We're paying for plan quality where it's affordable, instead of paying for it where it isn't. It's the same instinct as the Devil's Advocate gate in ADR-0064: how do you get an LLM to disagree with itself in a way that's actually useful? Put a different LLM in the room.
         </p>
 
         <!-- Forcing function 02 -->
@@ -1514,13 +1515,13 @@
           Finite resource budgets.
         </h3>
         <p>
-          Every loop carries an agreed wall-clock budget. Every plan-negotiation round counts against a hard cap of five. Every Generator task has a declared file list it cannot exceed. Every Validator verdict must conclude — no <em>"needs further investigation"</em> without an explicit re-dispatch. Quotas are the loop's anti-bikeshedding immune system. Without them:
+          Every loop comes with a wall-clock budget we've agreed on up front. Plan negotiation gets five rounds, hard cap. Every Generator task has a declared file list it can't exceed. Every Validator verdict has to actually land — no "needs further investigation" unless someone explicitly re-dispatches. Quotas are the loop's anti-bikeshedding immune system.
         </p>
         <p>
-          Plan negotiation drifts toward perfectionism. With them, it converges — the Lead and Validator both know round five is a hard stop, so meaningful disagreement gets surfaced to the human, not buried in another round of nuance. Build tasks grow scope silently. With them, scope growth requires the Generator to escalate to the Lead in writing. Validators hedge. With them, hedging is structurally banned: <strong>when in doubt, FAIL</strong>.
+          Without them, plan negotiation drifts toward perfectionism. With them, it converges, because both sides know round five is the end and real disagreements need to be surfaced to a human instead of buried in another round of nuance. Without them, build tasks quietly grow scope. With them, growing scope means escalating to the Lead in writing. Without them, Validators hedge. With them, hedging is just banned: when in doubt, FAIL.
         </p>
         <p>
-          The constraint is what produces the discipline. <em>"Engineering judgment"</em> is a phrase that means nothing without a budget; with one, it becomes a real act of trade-off. Finite resources turn open-ended LLM reasoning into bounded engineering.
+          The constraint is where the discipline comes from. "Engineering judgment" is empty when there's no budget — it just means "let's keep thinking about it." Put a budget around it and it becomes a real trade-off, which is what engineering actually is.
         </p>
 
         <!-- Forcing function 03 -->
@@ -1529,13 +1530,13 @@
           Disposable subagents, by design.
         </h3>
         <p>
-          Long-running agents rot. They accumulate wrong hypotheses, hedge against bugs that no longer exist, get stuck defending earlier mistakes, and inherit confused mental models across iterations. <strong>Context-rot is the silent killer of long agent sessions.</strong> The Generator and Validator are spawned fresh on every task — they have no memory of the prior iteration's bad guess. They read the task file, do the work, and die.
+          Long-running agents rot. They hang on to wrong hypotheses, keep hedging against bugs that don't exist anymore, defend yesterday's mistakes, and drag confused mental models across iterations. Context-rot is what quietly kills long agent sessions. So the Generator and Validator get spawned fresh every task. They have no memory of the last round's bad guess. They read the task file, do the work, and exit.
         </p>
         <p>
-          Three effects compound. Cognition stays clean — each task is reasoned from first principles against the current state of the code, not against accumulated mythology. Reports become primary sources — because the Lead is the only continuous session, every cross-task message goes through written reports, and those reports become the audit trail of the build. Failure is local — a bad Generator run does not poison the next one. The Lead reads the failure report, writes a fresh debug task, spawns a fresh Generator. Clean slate every time.
+          Three things follow from that. Reasoning stays clean: each task is approached from first principles against what the code actually looks like right now, not against last week's mythology. Reports become the system of record: since the Lead is the only thing that persists, all the cross-task communication has to be written down, and those reports turn into the audit trail. And failure stays local: a bad Generator run can't poison the next one. The Lead reads the failure report, writes a debug task, spawns a fresh Generator. Clean slate, every time.
         </p>
         <p>
-          The dev loop treats every sub-agent as disposable on principle, not on convenience. That principle is what lets the loop run for hours without intervention: there is nothing accumulating in the corners.
+          The point is that we treat subagents as disposable on principle, not just because it's convenient. It's the reason the loop can run for hours without us watching it: nothing is quietly building up in the corners.
         </p>
 
         <!-- Forcing function 04 -->
@@ -1544,16 +1545,16 @@
           TDD RED-first.
         </h3>
         <p>
-          The most expensive bug in agentic dev is the green-when-it-shouldn't-be test. The agent writes the implementation. The agent writes a test that asserts what the implementation already does. The test passes. The build looks green. The bug ships. We make this structurally impossible by writing the tests <em>first</em> and verifying them <strong>RED</strong> before any implementation is dispatched.
+          The most expensive bug in agentic dev is the test that's green when it shouldn't be. The agent writes the implementation, then writes a test that asserts what the implementation already does, then watches it pass. The build looks green. The bug ships. We make that structurally impossible by writing the tests first and checking they're <strong>RED</strong> before any implementation is dispatched.
         </p>
         <p>
-          Phase 1 of every feature produces, in this exact order: <code>tests/e2e/features/&lt;feature&gt;.feature</code> (Gherkin BDD scenarios), <code>tests/e2e/steps/&lt;feature&gt;.ts</code> (step definitions), <code>.claude/loop-state/evals/&lt;feature&gt;-e2e.yaml</code> (Playwright eval criteria), and <code>.claude/loop-state/evals/&lt;feature&gt;-llm.yaml</code> (LLM-as-judge rubrics). The Validator then runs the suite in both modes — <code>localhost:3001</code> against the local stack and <code>app.dev.nexentra.ai</code> against AWS dev — and confirms <strong>every scenario fails</strong>. Only after that confirmation does the implementation plan get approved. Acceptance criteria are not prose. They are executable. The Lead cannot say <em>"this feature works"</em>; the test runner says it.
+          So Phase 1 of every feature produces, in order: <code>tests/e2e/features/&lt;feature&gt;.feature</code> (Gherkin scenarios), <code>tests/e2e/steps/&lt;feature&gt;.ts</code> (step defs), <code>.claude/loop-state/evals/&lt;feature&gt;-e2e.yaml</code> (Playwright criteria), and <code>.claude/loop-state/evals/&lt;feature&gt;-llm.yaml</code> (LLM-as-judge rubrics). The Validator then runs the whole suite in both modes — <code>localhost:3001</code> against the local stack and <code>app.dev.nexentra.ai</code> against AWS dev — and confirms every scenario fails. Only then does the implementation plan get approved. Acceptance criteria aren't prose. They're code. The Lead doesn't get to say "this feature works." The test runner says it.
         </p>
         <p>
-          Three effects compound. The Validator's verdict becomes <strong>deterministic</strong> — pass/fail is binary, grounded in code execution, not LLM judgment. The LLM-as-judge layer is still there for agent-quality scoring, but functional correctness is verified by Playwright clicking buttons and asserting DOM state, and by Python assertions against DynamoDB rows, SPARQL results, and pgvector retrievals. The plan and the test become <strong>the same artifact</strong> — a vague acceptance criterion cannot survive translation into a Gherkin scenario, so plan review and test review collapse into the same review. False positives become <strong>structurally impossible</strong> — a test that was green before implementation cannot be trusted to have caught anything; RED-first proves the test means what it claims to mean.
+          A few things fall out of that. The Validator's verdict is now actually binary — grounded in real code execution, not LLM vibes. The LLM-as-judge layer is still in the loop for things like agent-quality scoring, but functional correctness is decided by Playwright clicking buttons and Python asserting against DynamoDB rows, SPARQL results, and pgvector retrievals. The plan and the test become the same artifact: a vague acceptance criterion just can't survive being turned into a Gherkin scenario, so plan review and test review collapse into one review. And false positives stop being possible by construction. A test that was green before the implementation existed wasn't really catching anything — RED-first is how we know the test means what it claims to mean.
         </p>
         <p>
-          This is determinism layered on top of LLM reasoning. The agents are creative inside the bounded space; the test suite is the boundary. Where an unbounded LLM would drift, a RED test pulls it back to a single binary answer: <em>is the user-visible scenario now passing or not?</em> Everything else is opinion. Without the RED-first discipline, the loop's verdicts are confident but uncalibrated. With it, they are <strong>reproducible</strong>.
+          This is determinism wrapped around LLM reasoning. The agents get to be creative inside a bounded space, and the test suite is what bounds it. Where an unbounded LLM drifts, a RED test pulls it back to one binary answer: is the user-visible scenario passing or not? Everything else is opinion. Without RED-first, the loop's verdicts are confident but uncalibrated. With it, they're reproducible.
         </p>
 
         <!-- Forcing function summary panel -->
@@ -1590,11 +1591,11 @@
         <h2 class="sec__head">Anthropic's <em>framework</em>, recognized in the wild.</h2>
 
         <p>
-          The dev loop is a deliberate composition of patterns Claude is good at. None of these are invented here. What is new is the binding of them into a single coherent build cycle for institutional software.
+          The dev loop is built out of patterns Claude is already good at. We didn't invent any of these. What's ours is how we wired them together into one build cycle for actual product software.
         </p>
 
         <p>
-          There is a specific lineage worth naming first. In late 2024 Anthropic published <a href="https://www.anthropic.com/research/building-effective-agents" style="color: var(--amber); text-decoration: none; border-bottom: 1px solid var(--amber-dim);">Building effective agents</a> — a clean taxonomy of five workflow patterns and one agent pattern that the industry has been quietly converging on. Tariq <a href="https://x.com/trq212/status/2061907337154367865" style="color: var(--amber); text-decoration: none; border-bottom: 1px solid var(--amber-dim);">pointed at this lineage</a> recently; once we read the framework against our own setup, the resemblance was not accidental. The dev loop is a precise composition of three of Anthropic's named patterns.
+          There's a specific lineage that's worth naming. In late 2024 Anthropic published <a href="https://www.anthropic.com/research/building-effective-agents" style="color: var(--amber); text-decoration: none; border-bottom: 1px solid var(--amber-dim);">Building effective agents</a>, which lays out five workflow patterns and one agent pattern that the industry has been quietly converging on for a while. Tariq <a href="https://x.com/trq212/status/2061907337154367865" style="color: var(--amber); text-decoration: none; border-bottom: 1px solid var(--amber-dim);">flagged this lineage</a> recently, and when we read the paper against our setup, the resemblance wasn't subtle. The dev loop is basically a tight composition of three of Anthropic's named patterns.
         </p>
 
         <!-- Anthropic mapping diagram -->
@@ -1675,15 +1676,15 @@
         </div>
 
         <p>
-          Three resemblances, named precisely. The Lead, viewed from outside, is Anthropic's <strong>autonomous agent</strong> — a long-running LLM that plans, dispatches, observes, and re-plans, with human checkpoints at inflection points (which is where Sumedha shows up). The Lead, viewed from inside, runs a strict <strong>orchestrator-workers</strong> workflow — it decomposes the feature into bounded tasks, delegates each to a fresh worker (Generator or Validator), and synthesizes the returned reports into the next round of planning. The plan-negotiate phase is a pure <strong>evaluator-optimizer</strong> loop — the Lead drafts, the Validator critiques, the Lead revises, with a 5-round quota that maps directly to Anthropic's <em>"iterative feedback in a loop, refining outputs."</em>
+          Three resemblances, and they line up almost too neatly. From the outside, the Lead is Anthropic's <strong>autonomous agent</strong>: a long-running LLM that plans, dispatches, observes, and re-plans, with human checkpoints at the moments that actually matter. (Those checkpoints are where I show up.) From the inside, the Lead is running a strict <strong>orchestrator-workers</strong> workflow — breaking the feature into bounded tasks, delegating each to a fresh worker, and rolling the reports back up into the next round of planning. And the plan-negotiate phase is the textbook <strong>evaluator-optimizer</strong> loop: Lead drafts, Validator critiques, Lead revises, with a 5-round quota that maps almost word-for-word onto Anthropic's "iterative feedback in a loop, refining outputs."
         </p>
 
         <p>
-          What we get from this naming: the dev loop is not idiosyncratic. It is the natural composition that falls out when you take Anthropic's published patterns seriously and apply them to a real build cycle. Workflow rigor at the outer level — predefined code paths the loop follows every time. Agent flexibility at the planning level — the Lead dynamically decides what to plan, when to escalate, when to converge. Hybrid by design, not by accident.
+          The useful thing about being able to name it this way is that it stops feeling like our weird thing. The dev loop is what naturally happens when you take Anthropic's patterns seriously and apply them to an actual build cycle. You get workflow rigor on the outside — the same code paths every time — and agent flexibility on the inside, where the Lead decides what to plan, when to escalate, and when to stop. It's a hybrid by design, not by accident.
         </p>
 
         <p>
-          The framework was a relief when we found it. We had been building this for months and trying to explain it as <em>"a multi-agent thing."</em> Anthropic's vocabulary gave us names for what we already had — and made obvious what the missing piece was. The article is mostly silent on state: how the orchestrator remembers, how the evaluator's verdicts persist, how the loop survives a session crash. That is the work the filesystem does in our loop (§05), and it is what turns these patterns from a research framework into a build cycle that runs while you sleep.
+          Finding the framework was a relief, honestly. We'd been building this thing for months and explaining it to people as "a multi-agent thing," which doesn't tell anyone much. Anthropic's vocabulary gave us names for what we already had, and it made it obvious what was missing. The paper is mostly quiet on state: how the orchestrator remembers, how verdicts persist, how the loop survives a crash. That's what the filesystem is doing in §05. It's the piece that turns a research framework into a build cycle you can leave running overnight.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 56px 0 16px; line-height: 1.15;">
@@ -1692,7 +1693,7 @@
         </h3>
 
         <p>
-          Beyond the three workflows above, the loop leans on a wider set of agentic-LLM disciplines. Each is a deliberate choice; none of them are accidents.
+          Beyond those three workflows, the loop quietly leans on a wider set of agentic-LLM patterns. Each of these is a deliberate choice. None of them are leftovers.
         </p>
 
         <div class="pattern-table">
@@ -1746,11 +1747,11 @@
         <h2 class="sec__head">Bounded by a <em>written rulebook</em>.</h2>
 
         <p>
-          The autonomy is real. It is also <em>not</em> unbounded. The loop operates inside a thick, versioned, machine-readable rulebook that every actor reads at planning time and at validation time. This is how you govern human engineers — through written rules, reviewed and consistent. It is how you govern AI engineers too. The rulebook is the scope. The loop is what operates inside it.
+          The autonomy is real. It's also not unbounded. The loop runs inside a thick, versioned, machine-readable rulebook, and every actor reads from it at planning time and at validation time. That's how you govern a team of human engineers — written rules, reviewed and applied consistently — and it turns out to be how you govern a team of AI engineers, too. The rulebook is the scope. The loop is what runs inside it.
         </p>
 
         <p>
-          What follows is the literal stack of rules the loop respects, layered from highest authority to most local — and a note on which actor reads which.
+          Here's the actual stack of rules the loop respects, layered from highest authority down to the most local, with a note on which actor reads which.
         </p>
 
         <!-- THE RULEBOOK STACK -->
@@ -1848,10 +1849,10 @@
           Cited, not improvised.
         </h3>
         <p>
-          The Lead reads the relevant layers during <code>PLAN-DRAFT</code>. The Validator reads the same layers during <code>PLAN-REVIEW</code> and verdict construction. Both actors are <strong>quoting from the rulebook</strong>, not making it up. When the Lead proposes a new REST surface, the Validator does not say <em>"this feels wrong"</em> — it says <em>"this violates ADR-0066; the plan is missing the required ADR-0066 EXCEPTION subsection."</em> Disagreements are adjudicated by reference to written rule, and the rule is reachable in the repo.
+          The Lead reads the relevant layers during <code>PLAN-DRAFT</code>. The Validator reads the same layers during <code>PLAN-REVIEW</code> and when writing a verdict. Both of them are quoting from the rulebook, not improvising. When the Lead proposes a new REST surface, the Validator doesn't say "this feels wrong" — it says "this violates ADR-0066; the plan is missing the required ADR-0066 EXCEPTION subsection." Disagreements get resolved by pointing at written rules, and the rules are always reachable in the repo.
         </p>
         <p>
-          When a rule is missing or ambiguous, the loop surfaces the gap to the human via <code>AskUserQuestion</code>. It does not improvise. It does not guess. It asks. <strong>That escalation is itself a rule</strong> — written into the Lead's charter as the round-cap escape valve.
+          When a rule is missing or ambiguous, the loop doesn't guess. It surfaces the gap to a human via <code>AskUserQuestion</code> and waits. That escalation is itself a rule — it's written into the Lead's charter as the escape valve when the plan loop hits its round cap.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 40px 0 4px; line-height: 1.15;">
@@ -1859,14 +1860,14 @@
           What the rulebook actually does.
         </h3>
         <p>
-          Without the rulebook, an autonomous loop is unbounded — and unbounded autonomy in a financial-services repo is indefensible. With the rulebook, the loop's autonomy is <strong>scoped</strong>: it can plan, build, deploy, and verify within written boundaries, and it must escalate the moment a decision exceeds them. This is exactly how we govern human engineers. Written rules. Reviewed. Versioned. Enforced consistently. The only difference is that <em>the agents read the rules more carefully than we do</em>, because they are required to cite them.
+          Without the rulebook, an autonomous loop is unbounded, and unbounded autonomy in a financial-services repo is a non-starter. The rulebook is what makes the loop's autonomy scoped instead: it can plan, build, deploy, and verify within boundaries we wrote down, and the moment a decision lives outside those boundaries, it has to escalate. This is just how we govern human engineers. Written rules, reviewed, versioned, applied the same way for everyone. The one twist is that the agents read the rules more carefully than we do, because they're required to cite them.
         </p>
         <p>
-          Rules are not constraints that limit the loop. They are the institutional knowledge that makes its autonomy <strong>defensible</strong>. The dev loop is not <em>"unleashed AI."</em> It is <em>scope-bounded AI</em> — operating fully autonomously inside a written boundary the team agreed on in advance, and which the team can amend on the same review surface used for code. Rules are first-class artifacts. They get pull requests. They get reviewed. They ship.
+          Rules aren't constraints on the loop. They're the institutional knowledge that makes its autonomy defensible. What we're running isn't "unleashed AI." It's scope-bounded AI — fully autonomous inside a written boundary the team agreed on up front, and amendable through the same review surface we use for code. Rules are first-class artifacts here. They get pull requests. They get reviewed. They ship.
         </p>
 
         <p class="pullquote" style="margin: 56px 0 24px;">
-          Autonomy is what the loop has. Scope is what the rulebook gives it. The combination is what makes it operable in a regulated codebase.
+          Autonomy is what the loop has. The rulebook is what scopes it. The combination is what makes it usable in a regulated codebase.
         </p>
       </section>
 
@@ -1876,7 +1877,7 @@
         <h2 class="sec__head">Trusted as <em>engineers</em>.</h2>
 
         <p>
-          Most organizations cannot bring themselves to extend production-grade access to coding agents. The <em>"AI as autocomplete"</em> framing is partly a brand decision and partly an honest trust constraint — the agents are kept in a sandbox because the consequences of letting them out feel unbounded. <strong>We took the opposite bet.</strong> Inside the dev loop, the agents have the same access surface a junior engineer would have on day one: scoped AWS credentials, deploy authority to dev, CloudWatch log access, database read paths, GitHub push, the ability to spawn ECS tasks and push container images. They are not assistants. They are engineers, and we treat them like it.
+          Most organizations can't bring themselves to give coding agents production-grade access. The "AI as autocomplete" framing is partly a brand decision and partly a real trust constraint — agents stay in the sandbox because the consequences of letting them out feel unbounded. We took the other bet. Inside the dev loop, the agents have the same access a junior engineer has on day one: scoped AWS credentials, deploy authority to dev, CloudWatch access, database reads, GitHub push, the ability to spawn ECS tasks and push container images. They're not assistants. They're engineers, and we treat them like engineers.
         </p>
 
         <!-- TRUST LADDER -->
@@ -1985,7 +1986,7 @@
           Why organizations stop at Tier 2.
         </h3>
         <p>
-          The trust ceiling is rarely technical. It is institutional. Granting an LLM AWS credentials feels different from granting them to a new hire — even when the scope is identical, even when the audit trail is better. The reluctance comes from four honest fears: <em>what if it pushes bad code? what if it leaks credentials? what if it racks up AWS spend? what if it makes a destructive call?</em> Each one has a defensible answer in the dev loop's design, and the answer is the same answer you'd give for trusting a junior engineer — but the organizational muscle for giving that answer to an agent has not been built yet.
+          The ceiling on trust is almost never technical. It's institutional. Handing an LLM AWS credentials just feels different from handing them to a new hire, even when the scope is identical and the audit trail is actually better. The reluctance usually comes down to four honest fears: what if it pushes bad code, what if it leaks credentials, what if it burns through cloud spend, what if it makes a destructive call. Each one has a defensible answer inside the dev loop, and the answer is roughly the same answer you'd give for a junior engineer — but most orgs haven't yet built the muscle to give that answer to an agent.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 40px 0 4px; line-height: 1.15;">
@@ -1993,10 +1994,10 @@
           The discipline that earns the access.
         </h3>
         <p>
-          The dev loop's discipline is what <strong>makes this trust safe to give</strong>. The same forcing functions that make the loop converge also constrain what the agents can do with the access they have. The Lead cannot write code — so it cannot push bad code itself, only via Generator output that the Validator must clear. The Validator fails closed — so a bad deploy never advances. Quotas bound per-loop AWS spend at the wall-clock budget. Audit trail traces every API call back to a task ID, an iteration, and a generator report. Filesystem state means tampered loop state is detectable on the next read. Every capability granted to the agents was earned by a corresponding constraint in the loop's structure.
+          What makes the trust safe to give is the same discipline that makes the loop converge in the first place. The Lead can't write code, so the only way bad code lands is via a Generator report the Validator has to clear. The Validator fails closed, so a bad deploy never advances. The wall-clock budget caps per-loop AWS spend. Every API call traces back to a task ID, an iteration, and a generator report. And because loop state lives on disk, any tampering with that state shows up on the next read. Every capability we hand to the agents has a matching constraint somewhere in the loop's structure that earned it.
         </p>
         <p>
-          The result is asymmetric: the agents have <em>more</em> traceability than a human engineer would. Every command, every read, every write is logged to a file that survives the session. The trust we extend is not blind. It is instrumented.
+          The result is a little asymmetric: the agents are actually more traceable than a human engineer would be. Every command, read, and write lands in a file that outlives the session. The trust we extend isn't blind. It's instrumented.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 40px 0 4px; line-height: 1.15;">
@@ -2004,7 +2005,7 @@
           Honest boundaries.
         </h3>
         <p>
-          Not everything. Production deploys require human plan approval — the Lead can propose, but a human merges to main and triggers the prod pipeline. Customer data is never reachable from the dev loop; even staging uses synthetic seed. Secrets rotation is a human-only ritual. New IAM role creation is a human-only ritual. Cost ceilings above the per-loop budget require human override. These are the same boundaries we would set for a junior engineer in their first six months — and for the same reasons. The agents are engineers, but they are not senior staff. Yet.
+          A lot, but not everything. Production deploys still need human approval — the Lead can propose, but a person is the one who merges to main and triggers the prod pipeline. Customer data is never reachable from the dev loop; even staging runs on synthetic seed. Secrets rotation is a human-only ritual. So is creating new IAM roles. Spending more than the per-loop budget requires a human override. These are the same boundaries we'd put around a junior engineer in their first six months, for the same reasons. The agents are engineers. They're just not senior staff. Yet.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
@@ -2012,14 +2013,14 @@
           Speaking to my developer.
         </h3>
         <p>
-          The last vestige of the <em>"operating a tool"</em> posture is the keyboard. As long as you type commands at the agent, some part of your brain treats it as a system to be driven. I do not type to direct the loop — I speak to it. <strong>Whisperflow</strong> takes voice and converts it to the prompt, on every device, anywhere I am: laptop closed, phone in hand, walking to coffee. The Lead receives spoken intent and turns it into plan drafts and task assignments. The keyboard becomes the exception, not the rule.
+          The last bit of "I'm operating a tool" in my head is the keyboard. As long as you're typing commands at it, some part of your brain treats it like a system to be driven. So I stopped. I speak to the loop instead. <strong>Whisperflow</strong> takes my voice and turns it into a prompt, on whatever device I happen to have — laptop closed, phone in hand, walking to get coffee. The Lead receives the spoken intent and turns it into plan drafts and tasks. The keyboard is the exception now, not the default.
         </p>
         <p>
-          Speaking to a colleague is psychologically different from typing at a tool. Inflection lands, context comes naturally, you think out loud. After a week, you stop thinking of the agent as a thing you operate and start thinking of it as someone you work with. Granting the access is half of the mindset shift; speaking to it instead of typing at it is the other half. Together, they complete the move from <strong>"my tool"</strong> to <strong>"my developer."</strong>
+          Talking to a colleague is just different from typing at a tool. Inflection lands. Context comes out naturally because you're not editing your sentences. You think out loud. After about a week of this, the agent stops feeling like something you operate and starts feeling like someone you work with. Giving it real access is half of the shift. Talking to it is the other half. Put them together and "my tool" becomes "my developer," and you can't quite go back.
         </p>
 
         <p class="pullquote" style="margin: 56px 0;">
-          The dev loop is not a tool you supervise. It is an engineer you trust — granted real access, bounded by real discipline, addressed by voice. Once the team makes that move, the question stops being <em>"can we trust this?"</em> and starts being <em>"what's the next ceiling?"</em>
+          The dev loop isn't a tool you supervise. It's an engineer you trust — given real access, kept honest by real discipline, talked to like a person. Once the team crosses that line, the question stops being "can we trust this?" and starts being "what's next?"
         </p>
       </section>
 
@@ -2030,7 +2031,7 @@
         <h2 class="sec__head">The <em>self-hosted</em> engineer.</h2>
 
         <p>
-          There is a machine. It sits in a room. It is on right now. It does not sleep when I do, it does not stop when I close my laptop, it does not care that I am six time zones away. A real engineer has a workstation — and so does this one. This is the physical layer of the mindset shift. Everything that came before — the trust, the rulebook, the substrate, the forcing functions — runs on hardware. The hardware is intentional. It is what makes <em>self-hosted</em> a literal description, not a metaphor.
+          There's a machine. It's sitting in a room. It's on right now. It doesn't sleep when I sleep, it doesn't stop when I close my laptop, and it doesn't care if I'm somewhere else. A real engineer has a workstation, and this one has the same. Everything we've talked about so far — the trust, the rulebook, the substrate, the forcing functions — has to run somewhere. The hardware is the part most people skip, and it's the part that makes "self-hosted" a literal description instead of a metaphor.
         </p>
 
         <!-- THE WORKSTATION DIAGRAM -->
@@ -2217,15 +2218,15 @@
         </h3>
 
         <p>
-          <strong>The machine — a Mac.</strong> Mini, in our case, though any Mac with enough RAM works. Always powered. Always connected. Same dev tooling our team uses, same runtime quirks, same architecture. If a build works there, it works on every developer's Mac. The agent's workstation matches the team's workstation deliberately — there is no special hosted environment with different runtime behaviour, no sandbox that hides bugs the team would hit. The agent develops in the same conditions its work will land in.
+          <strong>The machine — a Mac.</strong> A Mini in our case, though any Mac with enough RAM does the job. Always plugged in, always on the network, running the same dev tooling our team uses, with the same runtime quirks and the same architecture. If a build works on this machine, it works on every developer's Mac. That match is on purpose. There's no special hosted environment with subtly different behaviour, no sandbox that hides the bugs the team would actually hit in their day-to-day. The agent develops in the same conditions its work has to land in.
         </p>
 
         <p>
-          <strong>The network — Tailscale.</strong> A mesh VPN with identity built in, zero public exposure, zero port forwarding. The Mac sits on a private network reachable from every device I own — laptop, phone, iPad, second laptop — and from nowhere else. Authentication is per-device. Revocation is one click. This is the same posture you would put a sensitive jumpbox in at a hedge fund: private subnet, identity-bound, audited at the edge. The agent runs where no random scanner on the public internet can ever reach it.
+          <strong>The network — Tailscale.</strong> A mesh VPN with identity built in, no public exposure, no port forwarding. The Mac sits on a private network reachable from every device I own — laptop, phone, iPad, second laptop — and from nowhere else. Auth is per-device. Revoking a device is one click. This is the same posture you'd put a sensitive jumpbox in at a hedge fund: private subnet, identity-bound, audited at the edge. The agent runs somewhere a random scanner on the public internet can't see, let alone reach.
         </p>
 
         <p>
-          <strong>The session — tmux.</strong> A long-running multi-pane session that survives every kind of disruption: ssh drops, sleep cycles, laptop restarts, Wi-Fi changes, cellular handoffs. The Lead runs in one pane. A live monitor — tailing CloudWatch + watching <code>manifest.json</code> — runs in another. A break-glass shell waits in a third. Reconnect from anywhere and you are back at the same conversation, the prompt blinking exactly where you left it. tmux is the substrate that makes <em>continuity</em> not a wish but a property.
+          <strong>The session — tmux.</strong> A long-running multi-pane session that survives basically everything: ssh drops, sleep cycles, laptop restarts, Wi-Fi changes, cellular handoffs. The Lead runs in one pane. A live monitor — tailing CloudWatch and watching <code>manifest.json</code> — runs in another. A break-glass shell waits in a third. Reconnect from anywhere and you're back in the same conversation, with the cursor blinking exactly where you left it. tmux is what turns continuity from a wish into a property of the system.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
@@ -2233,10 +2234,10 @@
           The travel story, literally.
         </h3>
         <p>
-          The travel story is no longer rhetorical. I sit down at my laptop in Houston, ssh into the Mac, the loop is mid-iteration — the Validator returned a FAIL on PR #437 fifteen minutes ago. I dictate a re-plan over Whisperflow. The Lead writes the next task. I close the laptop. I get in the car and start the drive to Austin. Three hours later, I pull into a gas station off I-10, open my phone, ssh in via Tailscale, and the loop has shipped two more PRs to dev. By the time I roll into Austin, three features have progressed two iterations each. <strong>The workstation never stopped.</strong>
+          The travel story isn't a rhetorical move anymore, it's just what a Tuesday looks like. I'm at my laptop in Houston, I ssh into the Mac, the loop is mid-iteration — the Validator FAILed PR #437 fifteen minutes ago. I dictate a re-plan over Whisperflow. The Lead writes the next task. I close the laptop, get in the car, start the drive to Austin. Three hours later I pull into a gas station off I-10, open my phone, ssh in over Tailscale, and the loop has shipped two more PRs to dev while I was driving. By the time I roll into Austin, three features have each moved forward two iterations. The workstation never stopped.
         </p>
         <p>
-          This is what <em>"AI software engineer"</em> means at full strength. Not a chatbot you query when you have a minute. Not an assistant that waits for prompts. An engineer with a workstation, on a network, in a persistent session — continuously available, continuously working, continuously reachable. The continuity is what makes the framing real. Without the always-on machine, the dev loop is a thing you start each morning. With it, the dev loop is something that runs alongside your life.
+          This is what we mean by "AI software engineer" at full strength. Not a chatbot you ping when you have a minute. Not an assistant that's idle until you prompt it. An engineer with a workstation, on a network, sitting in a persistent session — always available, always working, always reachable. The continuity is what makes the framing real. Without the always-on machine, the dev loop is something you start each morning. With it, the dev loop is something that runs alongside your life.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
@@ -2244,14 +2245,14 @@
           What this is, and is not.
         </h3>
         <p>
-          What this is <em>not</em>: a production agent. The workstation runs dev loops, occasionally staging loops. It does not have prod IAM. It does not touch customer data. Its AWS spend is bounded by the per-loop budget, and the Mac has its own fail-safes — a daily restart cron, a billing alarm wired to my phone, a kill switch in a secondary tmux pane. If the loop misbehaves, I shut it down from anywhere in under a minute.
+          A couple of things this is not, while we're being honest. It's not a production agent. The workstation runs dev loops and the occasional staging loop. It doesn't have prod IAM. It doesn't touch customer data. AWS spend is capped by the per-loop budget, and the Mac has its own fail-safes: a daily restart cron, a billing alarm wired to my phone, and a kill switch in a secondary tmux pane. If the loop starts misbehaving, I can shut it down from anywhere in under a minute.
         </p>
         <p>
-          What this is also <em>not</em>: a recommendation that every team needs a Mac in a closet. The form factor is incidental. What matters is that the agent has <em>somewhere to run</em>, <em>something to run in</em>, and <em>a way to reach it from anywhere</em>. A cloud VM works. A Linux box in a rack works. A Mac in your home office works. The architecture matters more than the silicon.
+          It's also not me recommending every team needs a Mac in a closet. The form factor is incidental. What matters is that the agent has somewhere to run, something to run in, and a way to reach it from anywhere. A cloud VM works. A Linux box in a rack works. A Mac in your home office works. The architecture is the part you should copy. The silicon doesn't matter.
         </p>
 
         <p class="pullquote" style="margin: 56px 0;">
-          A trusted engineer, granted real access, bounded by a written rulebook, addressed by voice, working from a persistent session on a workstation that never logs off. <em>That</em> is what we mean when we say <strong>self-hosted AI engineer</strong>. Not a tool you operate. A teammate with a desk.
+          A trusted engineer, given real access, kept honest by a written rulebook, talked to by voice, working from a persistent session on a workstation that never logs off. That's what we mean by <strong>self-hosted AI engineer</strong>. Not a tool you operate. A teammate with a desk.
         </p>
       </section>
 
@@ -2261,7 +2262,7 @@
         <h2 class="sec__head">The deeper <em>resemblance</em>.</h2>
 
         <p>
-          There is one more parallel worth naming explicitly. Nexus is governance-first, audit-everything, fail-closed, layer-isolated. The dev loop is the same architecture, applied to the act of building Nexus itself.
+          One more parallel worth naming out loud. Nexus itself is governance-first, audit-everything, fail-closed, layer-isolated. The dev loop is the same architecture, just turned around and applied to the act of building Nexus. We use the same shape to build the thing that we sell to customers.
         </p>
 
         <!-- Symmetry diagram -->
@@ -2361,15 +2362,15 @@
         </div>
 
         <p>
-          The <strong>Lead is governance</strong>. It can stop any action, write any policy, but it cannot reach into the Generator's work directly. The <strong>Generator is the agent runtime</strong> — stateless, disposable, focused, reset between tasks. The <strong>Validator is the audit-and-policy enforcement layer</strong> — append-only verdicts, evidence-bearing, fail-closed. The <strong>plan, manifest, and history files</strong> are the institutional memory of the loop. Every iteration is reconstructable.
+          The Lead is governance: it can stop anything and write any policy, but it doesn't get to reach into the Generator's work directly. The Generator is the agent runtime: stateless, disposable, focused, reset between tasks. The Validator is the audit and policy layer: append-only verdicts, evidence-bearing, fail-closed. And the plan, manifest, and history files together are the institutional memory of the loop. Every iteration can be reconstructed later from what's on disk.
         </p>
 
         <p>
-          We build Nexus with the same shape Nexus exposes to its customers. That symmetry is not aesthetic. It is how a small team ships an institutional-grade platform — by trusting the discipline of the loop more than the talent of any single agent in it.
+          We're building Nexus with the same shape Nexus exposes to its customers. That symmetry isn't an aesthetic choice. It's how a small team ships an institutional-grade platform — by trusting the discipline of the loop more than the talent of any one agent inside it.
         </p>
 
         <p>
-          And that is the meaning of the shift. The agents we once treated as productivity tools are, on the other side of the dev loop, <strong>software engineers</strong>. They plan, they build, they critique, they re-plan. They run on a remote box over Tailscale while their architect is on a plane. The humans are not faster typists with a smarter assistant. The humans are architects, free to decide what should exist — while the factory hums.
+          And that's really what the shift is. The agents we used to treat as productivity tools are, on the other side of this dev loop, software engineers. They plan, they build, they critique, they re-plan. They run on a remote box over Tailscale while their architect is in the car. The humans aren't faster typists with a smarter assistant. The humans are architects, free to decide what should exist, while the factory hums along.
         </p>
       </section>
 

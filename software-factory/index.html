@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>The Dev Loop — Engineering Note 03 (Light) · Nexentra by RTA Labs</title>
+<title>The Dev Loop · Engineering Note 03 (Light) · Nexentra by RTA Labs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -562,7 +562,7 @@
     color: var(--parchment);
   }
   .pullquote::before {
-    content: "—";
+    content: "§";
     color: var(--amber);
     margin-right: 8px;
   }
@@ -729,10 +729,10 @@
 
   <!-- ========== HERO ================================================ -->
   <header class="hero">
-    <div class="kicker fade fade-1">FIELD NOTE — A SHIFT IN HOW WE BUILD SOFTWARE</div>
+    <div class="kicker fade fade-1">FIELD NOTE · A SHIFT IN HOW WE BUILD SOFTWARE</div>
     <h1 class="hero__title fade fade-2">The <em>Software</em><br/>Factory.</h1>
     <p class="hero__sub fade fade-3">
-      From one Claude terminal to a three-agent loop that runs by itself —
+      From one Claude terminal to a three-agent loop that runs by itself,
       and what shifts when the AI stops feeling like a tool and starts feeling like a coworker.
     </p>
 
@@ -877,25 +877,25 @@
     <div class="article__body">
 
       <p class="lede">
-        AI coding agents were pitched as productivity tools — a sharper autocomplete, a faster rubber duck. What we run now is closer to a factory: a build cycle that corrects itself, where the agents do the engineering and the humans make architecture calls.
+        AI coding agents were pitched as productivity tools: a sharper autocomplete, a faster rubber duck. What we run now is closer to a factory. A build cycle that corrects itself, where the agents do the engineering and the humans make architecture calls.
       </p>
 
       <p>
-        It took five stages to get here, each one stretching what we trusted an agent to do. The three-agent loop in this repo is where it's landed. It looks a lot like how Anthropic builds Claude — not by accident.
+        It took five stages to get here, each one stretching what we trusted an agent to do. The three-agent loop in this repo is where it's landed. It looks a lot like how Anthropic builds Claude, not by accident.
       </p>
 
       <!-- ===== Section 01 — THE JOURNEY ===== -->
       <section class="sec" id="journey">
-        <span class="sec__num">§ 01 — Lineage of practice</span>
+        <span class="sec__num">§ 01 · Lineage of practice</span>
         <h2 class="sec__head">From <em>terminal</em> to factory.</h2>
 
         <p>
-          Five stages, all of which we actually ran. Not a tidy after-the-fact framework — just what happens when a small team keeps pushing AI agents to carry real weight, and the setup keeps reshaping itself underneath.
+          Five stages, all of which we actually ran. Not a tidy after-the-fact framework, just what happens when a small team keeps pushing AI agents to carry real weight, and the setup keeps reshaping itself underneath.
         </p>
 
         <!-- 5-STAGE JOURNEY DIAGRAM -->
         <div class="phase-section" style="padding: 36px 24px 32px;">
-          <div class="phase-section__label">FIG. 02 / FIVE STAGES — PAIR PROGRAMMER → SOFTWARE FACTORY</div>
+          <div class="phase-section__label">FIG. 02 / FIVE STAGES · PAIR PROGRAMMER → SOFTWARE FACTORY</div>
           <svg viewBox="0 0 1200 440" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
               <marker id="arrowJ" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -1036,7 +1036,7 @@
             </g>
 
             <!-- Top banner: where the shift happens -->
-            <text x="600" y="22" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#5a5040" letter-spacing="3">— PRODUCTIVITY TOOL —————————————————————————————————— SOFTWARE ENGINEER —</text>
+            <text x="600" y="22" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#5a5040" letter-spacing="3">PRODUCTIVITY TOOL ······································· SOFTWARE ENGINEER</text>
             <line x1="70"  y1="32" x2="600"  y2="32" stroke="#5a5040" stroke-width="0.5" stroke-dasharray="2 4"/>
             <line x1="600" y1="32" x2="1130" y2="32" stroke="#ff7a1a" stroke-width="0.7" stroke-dasharray="2 4"/>
 
@@ -1047,7 +1047,7 @@
             <text x="830" y="400" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#ff7a1a" letter-spacing="1">HUMAN: manager</text>
             <text x="1060" y="400" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#ff7a1a" letter-spacing="1">HUMAN: architect</text>
             <line x1="70" y1="410" x2="1130" y2="410" stroke="#1f1a13" stroke-width="1"/>
-            <text x="600" y="430" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="3">— EACH STAGE FREES MORE HUMAN ATTENTION —</text>
+            <text x="600" y="430" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="3">∙ EACH STAGE FREES MORE HUMAN ATTENTION ∙</text>
           </svg>
         </div>
 
@@ -1055,35 +1055,35 @@
           01 · The pair programmer
         </h3>
         <p>
-          One terminal, one developer, one Claude session. A nicer grep, a faster typist, a rubber duck that talks back. You get more done, but the way you build hasn't changed — you're still in the middle of every step. No build cycle yet, just a useful conversation.
+          One terminal, one developer, one Claude session. A nicer grep, a faster typist, a rubber duck that talks back. You get more done, but the way you build hasn't changed. You're still in the middle of every step. No build cycle yet, just a useful conversation.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
           02 · The workshop
         </h3>
         <p>
-          tmux. Four panes, four Claude sessions, four things at once. You hop between them — kick off a task here, read a report there. Each pane is still pair-programming, just in parallel. The bottleneck shifts from Claude's typing speed to your attention. Real upgrade, but not the moment things change.
+          tmux. Four panes, four Claude sessions, four things at once. You hop between them, kick off a task here, read a report there. Each pane is still pair-programming, just in parallel. The bottleneck shifts from Claude's typing speed to your attention. Real upgrade, but not the moment things change.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
           03 · The wire
         </h3>
         <p>
-          tmux can pipe a keystroke from one pane into another. <code>tmux send-keys -t pane-B "&lt;message&gt;" Enter</code>. With that, sessions can talk, and a small operator script can relay between them. You can walk away for a few minutes and come back to find work has happened. The agents don't know they're talking to each other, but you've stitched a crude nervous system between them — the first stage where the keyboard isn't load-bearing.
+          tmux can pipe a keystroke from one pane into another. <code>tmux send-keys -t pane-B "&lt;message&gt;" Enter</code>. With that, sessions can talk, and a small operator script can relay between them. You can walk away for a few minutes and come back to find work has happened. The agents don't know they're talking to each other, but you've stitched a crude nervous system between them. First stage where the keyboard isn't load-bearing.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
           04 · The org chart
         </h3>
         <p>
-          Claude agent teams arrive: shared task lists, agents addressable by name, scoped permissions, lifecycle events. <code>SendMessage</code> replaces send-keys. The lead and specialists know they're on a team. The org chart shows up inside the software — a chief architect with seven specialists, a VP of engineering with six leads. The team metaphor stops being a metaphor.
+          Claude agent teams arrive: shared task lists, agents addressable by name, scoped permissions, lifecycle events. <code>SendMessage</code> replaces send-keys. The lead and specialists know they're on a team. The org chart shows up inside the software: a chief architect with seven specialists, a VP of engineering with six leads. The team metaphor stops being a metaphor.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 28px; color: var(--parchment); margin: 32px 0 8px; line-height: 1.2;">
           05 · The factory
         </h3>
         <p>
-          The dev loop. <strong>Lead, Generator, Validator</strong> — each in a fresh context window, different incentives, hard scope limits, negotiated plan rounds, verdicts written to disk, diff check after every task. The human is gone from the build cycle for hours at a time. The agents aren't assisting; they're doing the work. The loop lives on a remote machine over <strong>Tailscale</strong>, pinned inside a long-lived <code>tmux</code> session. I close my laptop, get in the car, and the loop keeps going. By the time I arrive, three features have moved forward two iterations each. What's left for me are the calls only I can make.
+          The dev loop. <strong>Lead, Generator, Validator</strong>, each in a fresh context window, with different incentives, hard scope limits, negotiated plan rounds, verdicts written to disk, and a diff check after every task. The human is gone from the build cycle for hours at a time. The agents aren't assisting; they're doing the work. The loop lives on a remote machine over <strong>Tailscale</strong>, pinned inside a long-lived <code>tmux</code> session. I close my laptop, get in the car, and the loop keeps going. By the time I arrive, three features have moved forward two iterations each. What's left for me are the calls only I can make.
         </p>
 
         <p class="pullquote" style="margin: 40px 0;">
@@ -1093,11 +1093,11 @@
 
       <!-- ===== Section 02 ===== -->
       <section class="sec" id="what">
-        <span class="sec__num">§ 02 — Architecture</span>
+        <span class="sec__num">§ 02 · Architecture</span>
         <h2 class="sec__head">Inside the <em>factory</em>.</h2>
 
         <p>
-          What we run in this repo to ship features into Nexentra. Three roles, one reward function each, tightly scoped. State lives on disk under <code>.claude/loop-state/</code>: plan, approved plan, current task, manifest, generator reports, history. If you can't see it in a file, it isn't real. Stop a loop, walk away, pick it up later exactly where it was — and when something goes weird, the trail is right there.
+          What we run in this repo to ship features into Nexentra. Three roles, one reward function each, tightly scoped. State lives on disk under <code>.claude/loop-state/</code>: plan, approved plan, current task, manifest, generator reports, history. If you can't see it in a file, it isn't real. Stop a loop, walk away, pick it up later exactly where it was. When something goes weird, the trail is right there.
         </p>
 
         <div class="role-table">
@@ -1134,13 +1134,13 @@
         </div>
 
         <p>
-          Only the Lead sticks around. Everyone else gets spawned fresh — clean context, no memory of last round — and shuts down when their task is done. If you take one thing from this whole document, take that. It's the choice that holds everything else up.
+          Only the Lead sticks around. Everyone else gets spawned fresh, with clean context and no memory of last round, and shuts down when their task is done. If you take one thing from this whole document, take that. It's the choice that holds everything else up.
         </p>
       </section>
 
       <!-- ===== Section 02 ===== -->
       <section class="sec" id="why">
-        <span class="sec__num">§ 03 — Motivation</span>
+        <span class="sec__num">§ 03 · Motivation</span>
         <h2 class="sec__head">Why we <em>built</em> it.</h2>
 
         <p>
@@ -1173,11 +1173,11 @@
 
       <!-- ===== Section 03 ===== -->
       <section class="sec" id="how">
-        <span class="sec__num">§ 04 — Mechanics</span>
+        <span class="sec__num">§ 04 · Mechanics</span>
         <h2 class="sec__head">How it <em>accelerates</em>.</h2>
 
         <p>
-          Speed comes from doing small things consistently, not raw throughput. Every feature goes through the same five phases, in order, with real gates between them. Fail a gate and the loop stops — being a few hours in doesn't buy a pass.
+          Speed comes from doing small things consistently, not raw throughput. Every feature goes through the same five phases, in order, with real gates between them. Fail a gate and the loop stops. Being a few hours in doesn't buy a pass.
         </p>
 
         <div class="phase-section">
@@ -1263,11 +1263,11 @@
         </div>
 
         <p>
-          The same <code>.feature</code> file runs at <code>localhost:3001</code> and against <code>app.dev.nexentra.ai</code>. One suite, two environments — auth and seed differences live in helpers, not duplicate tests. After each task, the Validator runs a diff check; touch a file outside the approved list and the build fails.
+          The same <code>.feature</code> file runs at <code>localhost:3001</code> and against <code>app.dev.nexentra.ai</code>. One suite, two environments. Auth and seed differences live in helpers, not duplicate tests. After each task, the Validator runs a diff check; touch a file outside the approved list and the build fails.
         </p>
 
         <p>
-          One more rule. If a plan touches domain data and proposes REST instead of an agent tool, it needs an explicit <strong>ADR-0066 exception block</strong>. Nexentra is agent-first, and "REST by default" doesn't ship here — the loop catches it before architecture review ever has to.
+          One more rule. If a plan touches domain data and proposes REST instead of an agent tool, it needs an explicit <strong>ADR-0066 exception block</strong>. Nexentra is agent-first, and "REST by default" doesn't ship here. The loop catches it before architecture review ever has to.
         </p>
       </section>
 
@@ -1279,11 +1279,11 @@
       <!-- ===== Section 04 ===== -->
       <!-- ===== Section 05 — SUBSTRATE / STATE MANAGEMENT ===== -->
       <section class="sec" id="substrate">
-        <span class="sec__num">§ 05 — Substrate</span>
+        <span class="sec__num">§ 05 · Substrate</span>
         <h2 class="sec__head">Files as the loop's <em>memory</em>.</h2>
 
         <p>
-          The Lead never hands a task to the Generator through agent context. The Validator never returns a verdict through agent context. Every message in the loop is a file on disk. Sounds like a small detail. It's what the rest of the loop is bolted to — take it out and nothing else survives a working week.
+          The Lead never hands a task to the Generator through agent context. The Validator never returns a verdict through agent context. Every message in the loop is a file on disk. Sounds like a small detail. It's what the rest of the loop is bolted to. Take it out and nothing else survives a working week.
         </p>
 
         <!-- File tree visual -->
@@ -1305,7 +1305,7 @@
         </div>
 
         <p>
-          The Lead writes, subagents read. Handover is one file — <code>current-task.md</code> — with task ID, mode, allowed files, acceptance criteria, and a pointer to <code>plan-approved.md</code>. The Generator spawns, reads, works, writes a report, exits. The Validator does the same in reverse: reads the report and the diff, writes a verdict, exits. The Lead persists; between iterations its only job is to read reports and write the next task.
+          The Lead writes, subagents read. Handover is one file, <code>current-task.md</code>, with task ID, mode, allowed files, acceptance criteria, and a pointer to <code>plan-approved.md</code>. The Generator spawns, reads, works, writes a report, exits. The Validator does the same in reverse: reads the report and the diff, writes a verdict, exits. The Lead persists; between iterations its only job is to read reports and write the next task.
         </p>
 
         <!-- Swim-lane sequence diagram -->
@@ -1402,19 +1402,19 @@
             </g>
 
             <!-- Margin annotations -->
-            <text x="60" y="525" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ NO DIRECT CHANNEL — every message goes through the filesystem ∙ context is for thinking, files are for memory ∙</text>
+            <text x="60" y="525" font-family="JetBrains Mono" font-size="9" fill="#5a5040" letter-spacing="2">∙ NO DIRECT CHANNEL · every message goes through the filesystem ∙ context is for thinking, files are for memory ∙</text>
           </svg>
         </div>
 
         <p>
-          A handful of nice things fall out of that. None clever, none needing new infrastructure — but together they're why the substrate is the part of the loop I'd lose last.
+          A handful of nice things fall out of that. None clever, none needing new infrastructure. Together they're why the substrate is the part of the loop I'd lose last.
         </p>
 
         <div class="failures">
           <div class="failure">
             <div class="failure__num">S · 01</div>
             <div class="failure__title">Resumable.</div>
-            <div class="failure__body">Kill the Lead and restart it from <code>manifest.json</code> — the loop picks up at the right phase, with every prior report and verdict intact. Session crashes are routine, not catastrophic.</div>
+            <div class="failure__body">Kill the Lead and restart it from <code>manifest.json</code>; the loop picks up at the right phase, with every prior report and verdict intact. Session crashes are routine, not catastrophic.</div>
           </div>
           <div class="failure">
             <div class="failure__num">S · 02</div>
@@ -1424,7 +1424,7 @@
           <div class="failure">
             <div class="failure__num">S · 03</div>
             <div class="failure__title">Auditable.</div>
-            <div class="failure__body">Every round leaves an immutable trace in <code>history/</code>. The full reasoning path of any feature can be reconstructed weeks later — long after every agent that produced it is gone.</div>
+            <div class="failure__body">Every round leaves an immutable trace in <code>history/</code>. The full reasoning path of any feature can be reconstructed weeks later, long after every agent that produced it is gone.</div>
           </div>
           <div class="failure">
             <div class="failure__num">S · 04</div>
@@ -1434,7 +1434,7 @@
           <div class="failure">
             <div class="failure__num">S · 05</div>
             <div class="failure__title">Survives the substrate.</div>
-            <div class="failure__body">Tailscale drops, laptop closes, tmux reconnects, the remote ECS task restarts — none of it loses place. The state is on disk on the remote box. The loop does not flinch.</div>
+            <div class="failure__body">Tailscale drops, laptop closes, tmux reconnects, the remote ECS task restarts: none of it loses place. The state is on disk on the remote box. The loop does not flinch.</div>
           </div>
           <div class="failure">
             <div class="failure__num">S · 06</div>
@@ -1449,10 +1449,10 @@
           How the human actually reads it.
         </h3>
         <p>
-          Every plan, spec, and design ships in two formats: <code>plan.md</code> for the loop, <code>plan.html</code> for whoever is reading. The HTML version gets the same treatment as this page — inline diagrams, real tables, visual hierarchy, color-coded sections.
+          Every plan, spec, and design ships in two formats: <code>plan.md</code> for the loop, <code>plan.html</code> for whoever is reading. The HTML version gets the same treatment as this page: inline diagrams, real tables, visual hierarchy, color-coded sections.
         </p>
         <p>
-          This is Tariq's argument in <a href="https://thariqs.github.io/html-effectiveness/" style="color: var(--amber); text-decoration: none; border-bottom: 1px solid var(--amber-dim);">HTML Effectiveness</a>: <em>"diffs and call-graphs are spatial information; markdown flattens them."</em> A 1,500-line markdown plan gets skimmed. The same content as a real document — diagram on the page, criteria in a table — gets read.
+          This is Tariq's argument in <a href="https://thariqs.github.io/html-effectiveness/" style="color: var(--amber); text-decoration: none; border-bottom: 1px solid var(--amber-dim);">HTML Effectiveness</a>: <em>"diffs and call-graphs are spatial information; markdown flattens them."</em> A 1,500-line markdown plan gets skimmed. The same content as a real document, with the diagram on the page and criteria in a table, gets read.
         </p>
 
         <!-- before/after callout -->
@@ -1470,7 +1470,7 @@
               <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; color: var(--amber); margin-bottom: 12px;">AFTER · DUAL FORMAT</div>
               <div style="font-family: var(--display); font-style: italic; font-size: 22px; color: var(--parchment); line-height: 1.25; margin-bottom: 14px;">"I actually read every section."</div>
               <div style="font-family: var(--body); font-size: 14px; color: var(--parchment-2); line-height: 1.5;">
-                Plans rendered with diagrams inline, criteria in styled tables, hierarchy visually obvious. Reviews surface real critiques — <em>"this acceptance criterion is unmeasurable, here is why"</em> — not <em>"what did you mean here?"</em>
+                Plans rendered with diagrams inline, criteria in styled tables, hierarchy visually obvious. Reviews surface real critiques like <em>"this acceptance criterion is unmeasurable, here is why,"</em> not <em>"what did you mean here?"</em>
               </div>
             </div>
           </div>
@@ -1486,11 +1486,11 @@
 
       <!-- ===== Section 06 — FORCING FUNCTIONS ===== -->
       <section class="sec" id="forcing">
-        <span class="sec__num">§ 06 — Forcing functions</span>
+        <span class="sec__num">§ 06 · Forcing functions</span>
         <h2 class="sec__head">Why it <em>actually</em> works.</h2>
 
         <p>
-          A few things that look like minor details are actually why this works. Not features — load-bearing decisions. Pull any one and the setup slides back to "agents wandering with good intentions."
+          A few things that look like minor details are actually why this works. Not features, but load-bearing decisions. Pull any one and the setup slides back to "agents wandering with good intentions."
         </p>
 
         <!-- Forcing function 01 -->
@@ -1499,13 +1499,13 @@
           The two-actor adversarial plan review.
         </h3>
         <p>
-          The Lead drafts a plan. The Validator — fresh context, no skin in the reasoning — tears into it. The Lead revises. Up to five rounds. A <strong>plan review, before any code exists</strong>.
+          The Lead drafts a plan. The Validator, fresh context, no skin in the reasoning, tears into it. The Lead revises. Up to five rounds. A <strong>plan review, before any code exists</strong>.
         </p>
         <p>
-          Soft spots show up fast. Vague acceptance criteria are the easiest target, so they go first — the Lead either makes them machine-checkable or drops them. By round three, the weak parts of the plan have been named out loud. Not consensus, something better: a plan where everyone knows where the risk lives.
+          Soft spots show up fast. Vague acceptance criteria are the easiest target, so they go first; the Lead either makes them machine-checkable or drops them. By round three, the weak parts of the plan have been named out loud. Not consensus, something better: a plan where everyone knows where the risk lives.
         </p>
         <p>
-          And it's cheap. Critique costs token-pennies; catching the same mistake during implementation costs a re-spawn, a re-deploy, half an evening. Same instinct as the Devil's Advocate gate in ADR-0064 — to make an LLM usefully disagree with itself, put a different LLM in the room.
+          And it's cheap. Critique costs token-pennies; catching the same mistake during implementation costs a re-spawn, a re-deploy, half an evening. Same instinct as the Devil's Advocate gate in ADR-0064: to make an LLM usefully disagree with itself, put a different LLM in the room.
         </p>
 
         <!-- Forcing function 02 -->
@@ -1514,10 +1514,10 @@
           Finite resource budgets.
         </h3>
         <p>
-          Every loop has a wall-clock budget. Plan negotiation gets five rounds, hard cap. Every Generator task has a declared file list it can't exceed. Every Validator verdict has to land — no "needs further investigation" unless someone explicitly re-dispatches. Quotas are the loop's anti-bikeshedding immune system.
+          Every loop has a wall-clock budget. Plan negotiation gets five rounds, hard cap. Every Generator task has a declared file list it can't exceed. Every Validator verdict has to land. No "needs further investigation" unless someone explicitly re-dispatches. Quotas are the loop's anti-bikeshedding immune system.
         </p>
         <p>
-          Without them, plan negotiation drifts toward perfectionism, scope quietly grows, and Validators hedge. With them, round five is the end (real disagreements escalate to a human), scope growth means escalating in writing, and hedging is just banned — when in doubt, FAIL.
+          Without them, plan negotiation drifts toward perfectionism, scope quietly grows, and Validators hedge. With them, round five is the end (real disagreements escalate to a human), scope growth means escalating in writing, and hedging is just banned. When in doubt, FAIL.
         </p>
         <p>
           The constraint is where the discipline comes from. "Engineering judgment" is empty without a budget. With one, it becomes a real trade-off, which is what engineering actually is.
@@ -1529,13 +1529,13 @@
           Disposable subagents, by design.
         </h3>
         <p>
-          Long-running agents rot. They hold onto wrong hypotheses, hedge against bugs that no longer exist, defend yesterday's mistakes. Context-rot is what kills long agent sessions. So Generator and Validator spawn fresh every task — no memory of the last round's bad guess. Read the task file, do the work, exit.
+          Long-running agents rot. They hold onto wrong hypotheses, hedge against bugs that no longer exist, defend yesterday's mistakes. Context-rot is what kills long agent sessions. So Generator and Validator spawn fresh every task, with no memory of the last round's bad guess. Read the task file, do the work, exit.
         </p>
         <p>
-          Three things follow. Reasoning stays clean — each task is first-principles against the current code, not last week's mythology. Reports become the system of record — the Lead is the only persistent thing, so cross-task messages are written down and become the audit trail. And failure stays local — a bad run can't poison the next. The Lead reads the failure report, writes a debug task, spawns a fresh Generator. Clean slate, every time.
+          Three things follow. Reasoning stays clean: each task is first-principles against the current code, not last week's mythology. Reports become the system of record: the Lead is the only persistent thing, so cross-task messages are written down and become the audit trail. And failure stays local: a bad run can't poison the next. The Lead reads the failure report, writes a debug task, spawns a fresh Generator. Clean slate, every time.
         </p>
         <p>
-          Disposable on principle, not convenience. That's why the loop can run for hours unattended — nothing builds up in the corners.
+          Disposable on principle, not convenience. That's why the loop can run for hours unattended: nothing builds up in the corners.
         </p>
 
         <!-- Forcing function 04 -->
@@ -1547,10 +1547,10 @@
           The most expensive bug in agentic dev is the green-when-it-shouldn't-be test. The agent writes the implementation, then writes a test that asserts what the implementation already does. Test passes. Build is green. Bug ships. We make that impossible by writing tests first and checking they're <strong>RED</strong> before any implementation is dispatched.
         </p>
         <p>
-          So Phase 1 produces, in order: <code>tests/e2e/features/&lt;feature&gt;.feature</code> (Gherkin scenarios), <code>tests/e2e/steps/&lt;feature&gt;.ts</code> (step defs), <code>.claude/loop-state/evals/&lt;feature&gt;-e2e.yaml</code> (Playwright criteria), and <code>.claude/loop-state/evals/&lt;feature&gt;-llm.yaml</code> (LLM-as-judge rubrics). The Validator runs both modes — <code>localhost:3001</code> and <code>app.dev.nexentra.ai</code> — and confirms every scenario fails. Only then does the implementation plan get approved. Acceptance criteria aren't prose, they're code. The Lead doesn't say "this works." The test runner says it.
+          So Phase 1 produces, in order: <code>tests/e2e/features/&lt;feature&gt;.feature</code> (Gherkin scenarios), <code>tests/e2e/steps/&lt;feature&gt;.ts</code> (step defs), <code>.claude/loop-state/evals/&lt;feature&gt;-e2e.yaml</code> (Playwright criteria), and <code>.claude/loop-state/evals/&lt;feature&gt;-llm.yaml</code> (LLM-as-judge rubrics). The Validator runs both modes, <code>localhost:3001</code> and <code>app.dev.nexentra.ai</code>, and confirms every scenario fails. Only then does the implementation plan get approved. Acceptance criteria aren't prose, they're code. The Lead doesn't say "this works." The test runner says it.
         </p>
         <p>
-          A few things fall out. The Validator's verdict is binary, grounded in real execution. LLM-as-judge is still in the loop for agent-quality scoring, but functional correctness is decided by Playwright clicking buttons and Python asserting against DynamoDB rows, SPARQL results, and pgvector retrievals. The plan and the test become the same artifact — a vague acceptance criterion can't survive being turned into Gherkin. And false positives stop being possible by construction.
+          A few things fall out. The Validator's verdict is binary, grounded in real execution. LLM-as-judge is still in the loop for agent-quality scoring, but functional correctness is decided by Playwright clicking buttons and Python asserting against DynamoDB rows, SPARQL results, and pgvector retrievals. The plan and the test become the same artifact: a vague acceptance criterion can't survive being turned into Gherkin. And false positives stop being possible by construction.
         </p>
         <p>
           Determinism wrapped around LLM reasoning. The agents are creative inside a bounded space; the test suite is the boundary. Where an unbounded LLM drifts, a RED test pulls it back to one binary answer: is the scenario passing or not? Without RED-first, verdicts are confident but uncalibrated. With it, they're reproducible.
@@ -1586,11 +1586,11 @@
 
       <!-- ===== Section 06 — LINEAGE ===== -->
       <section class="sec" id="claude">
-        <span class="sec__num">§ 07 — Lineage</span>
+        <span class="sec__num">§ 07 · Lineage</span>
         <h2 class="sec__head">Anthropic's <em>framework</em>, recognized in the wild.</h2>
 
         <p>
-          The dev loop is built out of patterns Claude is already good at. We didn't invent these. What's ours is the wiring — one build cycle for actual product software.
+          The dev loop is built out of patterns Claude is already good at. We didn't invent these. What's ours is the wiring: one build cycle for actual product software.
         </p>
 
         <p>
@@ -1657,7 +1657,7 @@
               <text x="80"  y="26" font-family="JetBrains Mono" font-size="10" fill="#a3501a" letter-spacing="2">AGENT PATTERN</text>
               <text x="80"  y="56" font-family="Instrument Serif" font-size="26" fill="#ebe1cf" font-style="italic">Autonomous agent</text>
               <text x="80"  y="82" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">LLM independently plans, executes tools, observes,</text>
-              <text x="80"  y="98" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">loops — with human checkpoints + stopping conditions.</text>
+              <text x="80"  y="98" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">loops, with human checkpoints + stopping conditions.</text>
 
               <line x1="500" y1="55" x2="700" y2="55" stroke="#ff7a1a" stroke-width="1.2" stroke-dasharray="4 6" marker-end="url(#arrowL)"/>
               <text x="600" y="46" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#ff7a1a" letter-spacing="2">MAPS TO</text>
@@ -1666,16 +1666,16 @@
               <text x="720" y="26" font-family="JetBrains Mono" font-size="10" fill="#ff7a1a" letter-spacing="2">THE LEAD ITSELF</text>
               <text x="720" y="56" font-family="Instrument Serif" font-size="26" fill="#ebe1cf" font-style="italic">Lead as autonomous agent</text>
               <text x="720" y="82" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">Plans, dispatches, observes verdicts, re-plans.</text>
-              <text x="720" y="98" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">Stops at inflection points — humans decide.</text>
+              <text x="720" y="98" font-family="JetBrains Mono" font-size="10.5" fill="#8a7e6a">Stops at inflection points; humans decide.</text>
             </g>
 
             <!-- Bottom legend -->
-            <text x="600" y="490" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="3">— WORKFLOW RIGOR AT THE OUTER LAYER · AGENT FLEXIBILITY AT THE PLANNING LAYER —</text>
+            <text x="600" y="490" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5a5040" letter-spacing="3">∙ WORKFLOW RIGOR AT THE OUTER LAYER · AGENT FLEXIBILITY AT THE PLANNING LAYER ∙</text>
           </svg>
         </div>
 
         <p>
-          From the outside, the Lead is Anthropic's <strong>autonomous agent</strong> — a long-running LLM that plans, dispatches, observes, re-plans, with human checkpoints at the moments that matter (where I show up). From the inside, it's <strong>orchestrator-workers</strong>: break the feature into bounded tasks, delegate each to a fresh worker, roll the reports back into planning. The plan-negotiate phase is textbook <strong>evaluator-optimizer</strong>: Lead drafts, Validator critiques, Lead revises, with a 5-round quota.
+          From the outside, the Lead is Anthropic's <strong>autonomous agent</strong>: a long-running LLM that plans, dispatches, observes, re-plans, with human checkpoints at the moments that matter (where I show up). From the inside, it's <strong>orchestrator-workers</strong>: break the feature into bounded tasks, delegate each to a fresh worker, roll the reports back into planning. The plan-negotiate phase is textbook <strong>evaluator-optimizer</strong>: Lead drafts, Validator critiques, Lead revises, with a 5-round quota.
         </p>
 
         <p>
@@ -1683,7 +1683,7 @@
         </p>
 
         <p>
-          Finding the framework was a relief. We'd been calling it "a multi-agent thing" for months, which doesn't tell anyone much. The paper is quiet on state — how the orchestrator remembers, how verdicts persist, how the loop survives a crash. That's the filesystem in §05. It's what turns a research framework into something you can leave running overnight.
+          Finding the framework was a relief. We'd been calling it "a multi-agent thing" for months, which doesn't tell anyone much. The paper is quiet on state: how the orchestrator remembers, how verdicts persist, how the loop survives a crash. That's the filesystem in §05. It's what turns a research framework into something you can leave running overnight.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 56px 0 16px; line-height: 1.15;">
@@ -1722,7 +1722,7 @@
           </div>
           <div class="pattern-row">
             <div class="pattern-cell"><b>Tool use</b>Structured external action.</div>
-            <div class="pattern-cell">Playwright is a tool. The MCP browser is a tool. <code>aws dynamodb get-item</code>, <code>aws logs tail</code>, SPARQL queries — all tools the Validator invokes with structured purpose.</div>
+            <div class="pattern-cell">Playwright is a tool. The MCP browser is a tool. <code>aws dynamodb get-item</code>, <code>aws logs tail</code>, SPARQL queries: all tools the Validator invokes with structured purpose.</div>
           </div>
           <div class="pattern-row">
             <div class="pattern-cell"><b>Adversarial reward shaping</b>Asymmetric penalties.</div>
@@ -1742,11 +1742,11 @@
 
       <!-- ===== Section 08 — RULES / GOVERNANCE ===== -->
       <section class="sec" id="rules">
-        <span class="sec__num">§ 08 — Rules</span>
+        <span class="sec__num">§ 08 · Rules</span>
         <h2 class="sec__head">Bounded by a <em>written rulebook</em>.</h2>
 
         <p>
-          The autonomy is real. It's also not unbounded. The loop runs inside a thick, versioned, machine-readable rulebook, and every actor reads from it at planning and validation time. That's how you govern human engineers — written rules, applied consistently — and it turns out to be how you govern AI engineers too.
+          The autonomy is real. It's also not unbounded. The loop runs inside a thick, versioned, machine-readable rulebook, and every actor reads from it at planning and validation time. That's how you govern human engineers: written rules, applied consistently. Turns out it's how you govern AI engineers too.
         </p>
 
         <p>
@@ -1797,7 +1797,7 @@
               <div style="font-family: var(--display); font-style: italic; font-size: 24px; color: var(--parchment); line-height: 1.05;">Shared references</div>
             </div>
             <div style="font-family: var(--body); font-size: 14.5px; color: var(--parchment-2); line-height: 1.55;">
-              <code>.claude/agents/references/</code> — architecture-principles · stack-constraints · code-standards · engineering-workflow · devils-advocate-protocol · glossary · adr-template · dev-loop-plan-format · dev-loop-task-format
+              <code>.claude/agents/references/</code> · architecture-principles · stack-constraints · code-standards · engineering-workflow · devils-advocate-protocol · glossary · adr-template · dev-loop-plan-format · dev-loop-task-format
             </div>
             <div style="font-family: var(--mono); font-size: 10.5px; color: var(--ochre); line-height: 1.55; letter-spacing: 0.04em;">
               <span style="color: var(--amber);">READ BY:</span><br/>
@@ -1814,7 +1814,7 @@
               <div style="font-family: var(--display); font-style: italic; font-size: 24px; color: var(--parchment); line-height: 1.05;">Per-service<br/>CLAUDE.md</div>
             </div>
             <div style="font-family: var(--body); font-size: 14.5px; color: var(--parchment-2); line-height: 1.55;">
-              Each service directory carries its own CLAUDE.md — <code>nexus/governance/</code> · <code>nexus/agent/agent-runtime/</code> · <code>nexus/data/connector-api/</code> · <code>web/</code>. Local schemas, internal interfaces, language conventions.
+              Each service directory carries its own CLAUDE.md: <code>nexus/governance/</code> · <code>nexus/agent/agent-runtime/</code> · <code>nexus/data/connector-api/</code> · <code>web/</code>. Local schemas, internal interfaces, language conventions.
             </div>
             <div style="font-family: var(--mono); font-size: 10.5px; color: var(--ochre); line-height: 1.55; letter-spacing: 0.04em;">
               <span style="color: var(--amber);">READ BY:</span><br/>
@@ -1830,11 +1830,11 @@
               <div style="font-family: var(--display); font-style: italic; font-size: 24px; color: var(--parchment); line-height: 1.05;">Loop self-rules</div>
             </div>
             <div style="font-family: var(--body); font-size: 14.5px; color: var(--parchment-2); line-height: 1.55;">
-              <code>dev-loop-lead.md</code> · <code>dev-loop-generator.md</code> · <code>dev-loop-validator.md</code> · <code>dev-loop-e2e-validator.md</code> · <code>references/dev-loop-comm-protocol.md</code> · <code>dev-loop-manifest-schema.md</code> — Lead writes no code, 10× false-PASS penalty, max 5 plan rounds, persistence-layer evidence required, ADR-0066 exception block when REST is proposed
+              <code>dev-loop-lead.md</code> · <code>dev-loop-generator.md</code> · <code>dev-loop-validator.md</code> · <code>dev-loop-e2e-validator.md</code> · <code>references/dev-loop-comm-protocol.md</code> · <code>dev-loop-manifest-schema.md</code>. Lead writes no code, 10× false-PASS penalty, max 5 plan rounds, persistence-layer evidence required, ADR-0066 exception block when REST is proposed
             </div>
             <div style="font-family: var(--mono); font-size: 10.5px; color: var(--ochre); line-height: 1.55; letter-spacing: 0.04em;">
               <span style="color: var(--amber);">READ BY:</span><br/>
-              Each actor reads its own charter on spawn — self-applied
+              Each actor reads its own charter on spawn (self-applied)
             </div>
           </div>
 
@@ -1848,7 +1848,7 @@
           Cited, not improvised.
         </h3>
         <p>
-          The Lead reads the relevant layers during <code>PLAN-DRAFT</code>. The Validator reads the same layers when writing a verdict. Both quote from the rulebook, not improvise. When the Lead proposes a new REST surface, the Validator doesn't say "this feels wrong" — it says "this violates ADR-0066; missing the required EXCEPTION subsection." Disagreements get resolved by pointing at written rules.
+          The Lead reads the relevant layers during <code>PLAN-DRAFT</code>. The Validator reads the same layers when writing a verdict. Both quote from the rulebook, not improvise. When the Lead proposes a new REST surface, the Validator doesn't say "this feels wrong." It says "this violates ADR-0066; missing the required EXCEPTION subsection." Disagreements get resolved by pointing at written rules.
         </p>
         <p>
           When a rule is missing or ambiguous, the loop doesn't guess. It surfaces the gap via <code>AskUserQuestion</code> and waits. That escalation is itself a rule, written into the Lead's charter.
@@ -1859,10 +1859,10 @@
           What the rulebook actually does.
         </h3>
         <p>
-          Unbounded autonomy in a financial-services repo is a non-starter. The rulebook scopes the loop's autonomy: plan, build, deploy, verify within written boundaries; escalate the moment a decision lives outside them. Same as how we govern human engineers — written, reviewed, versioned. The twist is that the agents read the rules more carefully, because they're required to cite them.
+          Unbounded autonomy in a financial-services repo is a non-starter. The rulebook scopes the loop's autonomy: plan, build, deploy, verify within written boundaries; escalate the moment a decision lives outside them. Same as how we govern human engineers: written, reviewed, versioned. The twist is that the agents read the rules more carefully, because they're required to cite them.
         </p>
         <p>
-          Rules aren't constraints, they're the institutional knowledge that makes autonomy defensible. Not "unleashed AI" — scope-bounded AI. Rules are first-class artifacts: they get PRs, they get reviewed, they ship.
+          Rules aren't constraints, they're the institutional knowledge that makes autonomy defensible. Not "unleashed AI." Scope-bounded AI. Rules are first-class artifacts: they get PRs, they get reviewed, they ship.
         </p>
 
         <p class="pullquote" style="margin: 56px 0 24px;">
@@ -1872,11 +1872,11 @@
 
       <!-- ===== Section 09 — TRUST ===== -->
       <section class="sec" id="trust">
-        <span class="sec__num">§ 09 — Trust</span>
+        <span class="sec__num">§ 09 · Trust</span>
         <h2 class="sec__head">Trusted as <em>engineers</em>.</h2>
 
         <p>
-          Most orgs can't bring themselves to give coding agents production-grade access. The "AI as autocomplete" framing is part brand, part real trust constraint — the sandbox stays because the consequences of letting them out feel unbounded. We took the other bet. Inside the dev loop, the agents have the access a junior engineer has on day one: scoped AWS credentials, deploy to dev, CloudWatch, database reads, GitHub push, ECS spawn, ECR push. Not assistants. Engineers, treated like engineers.
+          Most orgs can't bring themselves to give coding agents production-grade access. The "AI as autocomplete" framing is part brand, part real trust constraint. The sandbox stays because the consequences of letting them out feel unbounded. We took the other bet. Inside the dev loop, the agents have the access a junior engineer has on day one: scoped AWS credentials, deploy to dev, CloudWatch, database reads, GitHub push, ECS spawn, ECR push. Not assistants. Engineers, treated like engineers.
         </p>
 
         <!-- TRUST LADDER -->
@@ -1976,7 +1976,7 @@
           </div>
 
           <div style="margin-top: 18px; font-family: var(--mono); font-size: 9.5px; color: var(--ochre); letter-spacing: 2px; text-align: center;">
-            ↑ EACH ASCENT EXTENDS REAL ACCESS — AND REQUIRES REAL DISCIPLINE TO RECEIVE IT ↑
+            ↑ EACH ASCENT EXTENDS REAL ACCESS · AND REQUIRES REAL DISCIPLINE TO RECEIVE IT ↑
           </div>
         </div>
 
@@ -1985,7 +1985,7 @@
           Why organizations stop at Tier 2.
         </h3>
         <p>
-          The ceiling on trust is rarely technical, it's institutional. Handing an LLM AWS credentials feels different from handing them to a new hire, even when the scope is identical and the audit trail is better. Four honest fears: bad code, leaked credentials, runaway spend, destructive calls. Each has a defensible answer inside the dev loop — the same answers you'd give for a junior engineer. Most orgs just haven't built the muscle to give them to an agent.
+          The ceiling on trust is rarely technical, it's institutional. Handing an LLM AWS credentials feels different from handing them to a new hire, even when the scope is identical and the audit trail is better. Four honest fears: bad code, leaked credentials, runaway spend, destructive calls. Each has a defensible answer inside the dev loop, the same answers you'd give for a junior engineer. Most orgs just haven't built the muscle to give them to an agent.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 40px 0 4px; line-height: 1.15;">
@@ -1996,7 +1996,7 @@
           The same discipline that makes the loop converge also makes the trust safe. The Lead can't write code, so bad code only lands via a Generator report the Validator has to clear. The Validator fails closed. The wall-clock budget caps AWS spend. Every API call traces back to a task ID, iteration, and generator report. Loop state on disk means tampering shows up on the next read. Every capability has a matching constraint that earned it.
         </p>
         <p>
-          The agents end up more traceable than a human engineer. Every command, read, and write lives in a file that outlives the session. The trust isn't blind — it's instrumented.
+          The agents end up more traceable than a human engineer. Every command, read, and write lives in a file that outlives the session. The trust isn't blind, it's instrumented.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 40px 0 4px; line-height: 1.15;">
@@ -2004,7 +2004,7 @@
           Honest boundaries.
         </h3>
         <p>
-          A lot, but not everything. Production deploys need human approval — the Lead proposes, a person merges to main and triggers the pipeline. Customer data isn't reachable from the dev loop; even staging runs on synthetic seed. Secrets rotation and new IAM roles are human-only. Spending past the per-loop budget needs human override. Same boundaries we'd put around a junior engineer in their first six months. The agents are engineers — just not senior staff. Yet.
+          A lot, but not everything. Production deploys need human approval. The Lead proposes, a person merges to main and triggers the pipeline. Customer data isn't reachable from the dev loop; even staging runs on synthetic seed. Secrets rotation and new IAM roles are human-only. Spending past the per-loop budget needs human override. Same boundaries we'd put around a junior engineer in their first six months. The agents are engineers, just not senior staff. Yet.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
@@ -2012,25 +2012,25 @@
           Speaking to my developer.
         </h3>
         <p>
-          The last "I'm operating a tool" instinct lives in the keyboard. As long as you're typing commands, part of your brain treats the agent like a system to be driven. So I stopped. <strong>Whisperflow</strong> takes my voice and turns it into a prompt — laptop open, lid closed, walking to coffee, on a call between meetings. The Lead turns spoken intent into plan drafts and tasks.
+          The last "I'm operating a tool" instinct lives in the keyboard. As long as you're typing commands, part of your brain treats the agent like a system to be driven. So I stopped. <strong>Whisperflow</strong> takes my voice and turns it into a prompt: laptop open, lid closed, walking to coffee, on a call between meetings. The Lead turns spoken intent into plan drafts and tasks.
         </p>
         <p>
           Talking to a colleague is different from typing at a tool. Inflection lands, context comes naturally, you think out loud. After a week, the agent stops feeling like something you operate and starts feeling like someone you work with. Real access is half the shift; talking to it is the other half. "My tool" becomes "my developer," and you don't go back.
         </p>
 
         <p class="pullquote" style="margin: 56px 0;">
-          Not a tool you supervise. An engineer you trust — given real access, kept honest by real discipline, talked to like a person. Once you cross that line, the question stops being "can we trust this?" and starts being "what's next?"
+          Not a tool you supervise. An engineer you trust, given real access, kept honest by real discipline, talked to like a person. Once you cross that line, the question stops being "can we trust this?" and starts being "what's next?"
         </p>
       </section>
 
       <!-- ===== Section 09 — REFLECTION ===== -->
       <!-- ===== Section 10 — WORKSTATION ===== -->
       <section class="sec" id="workstation">
-        <span class="sec__num">§ 10 — Workstation</span>
+        <span class="sec__num">§ 10 · Workstation</span>
         <h2 class="sec__head">The <em>self-hosted</em> engineer.</h2>
 
         <p>
-          There's a machine in a room. It's on right now. It doesn't sleep, doesn't stop when I close my laptop, doesn't care where I am. A real engineer has a workstation; this one has the same. The trust, the rulebook, the substrate, the forcing functions all have to run somewhere — the hardware is the part most people skip, and it's what makes "self-hosted" literal instead of a metaphor.
+          There's a machine in a room. It's on right now. It doesn't sleep, doesn't stop when I close my laptop, doesn't care where I am. A real engineer has a workstation; this one has the same. The trust, the rulebook, the substrate, the forcing functions all have to run somewhere. The hardware is the part most people skip, and it's what makes "self-hosted" literal instead of a metaphor.
         </p>
 
         <!-- THE WORKSTATION DIAGRAM -->
@@ -2218,15 +2218,15 @@
         </h3>
 
         <p>
-          <strong>The machine — a Mac.</strong> A Mini, any Mac with enough RAM works. Always plugged in, same dev tooling our team uses, same runtime, same architecture. A build that works here works on every developer's Mac. No special hosted environment, no sandbox hiding bugs the team would hit. The agent develops in the same conditions its work has to land in.
+          <strong>The machine: a Mac.</strong> A Mini, any Mac with enough RAM works. Always plugged in, same dev tooling our team uses, same runtime, same architecture. A build that works here works on every developer's Mac. No special hosted environment, no sandbox hiding bugs the team would hit. The agent develops in the same conditions its work has to land in.
         </p>
 
         <p>
-          <strong>The network — Tailscale.</strong> Mesh VPN with identity built in. No public exposure, no port forwarding. The Mac is reachable from every device I own and nowhere else. Per-device auth, one-click revoke. Same posture as a sensitive jumpbox at a hedge fund — private subnet, identity-bound, audited at the edge.
+          <strong>The network: Tailscale.</strong> Mesh VPN with identity built in. No public exposure, no port forwarding. The Mac is reachable from every device I own and nowhere else. Per-device auth, one-click revoke. Same posture as a sensitive jumpbox at a hedge fund: private subnet, identity-bound, audited at the edge.
         </p>
 
         <p>
-          <strong>The session — tmux.</strong> A long-running multi-pane session that survives ssh drops, sleep cycles, restarts, Wi-Fi changes, cellular handoffs. Lead in one pane. Live monitor (CloudWatch tail + <code>manifest.json</code>) in another. Break-glass shell in a third. Reconnect from anywhere and the cursor is exactly where you left it. tmux turns continuity from a wish into a property.
+          <strong>The session: tmux.</strong> A long-running multi-pane session that survives ssh drops, sleep cycles, restarts, Wi-Fi changes, cellular handoffs. Lead in one pane. Live monitor (CloudWatch tail + <code>manifest.json</code>) in another. Break-glass shell in a third. Reconnect from anywhere and the cursor is exactly where you left it. tmux turns continuity from a wish into a property.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
@@ -2234,10 +2234,10 @@
           The travel story, literally.
         </h3>
         <p>
-          The travel story is what a Tuesday looks like. Laptop in Houston, ssh into the Mac, the loop is mid-iteration — Validator FAILed PR #437 fifteen minutes ago. Dictate a re-plan over Whisperflow. Lead writes the next task. Close the laptop, get in the car, drive to Austin. Three hours later I'm at a gas station off I-10, open my laptop, ssh in — two more PRs shipped to dev. By the time I roll into Austin, three features have each moved forward two iterations. The workstation never stopped.
+          The travel story is what a Tuesday looks like. Laptop in Houston, ssh into the Mac, the loop is mid-iteration. Validator FAILed PR #437 fifteen minutes ago. Dictate a re-plan over Whisperflow. Lead writes the next task. Close the laptop, get in the car, drive to Austin. Three hours later I'm at a gas station off I-10, open my laptop, ssh in: two more PRs shipped to dev. By the time I roll into Austin, three features have each moved forward two iterations. The workstation never stopped.
         </p>
         <p>
-          This is what "AI software engineer" at full strength means. Not a chatbot you ping. Not an assistant idle until prompted. An engineer with a workstation, on a network, in a persistent session — always available, always working. Without the always-on machine, the dev loop is something you start each morning. With it, it runs alongside your life.
+          This is what "AI software engineer" at full strength means. Not a chatbot you ping. Not an assistant idle until prompted. An engineer with a workstation, on a network, in a persistent session, always available, always working. Without the always-on machine, the dev loop is something you start each morning. With it, it runs alongside your life.
         </p>
 
         <h3 style="font-family: var(--display); font-style: italic; font-size: 30px; color: var(--parchment); margin: 48px 0 4px; line-height: 1.15;">
@@ -2245,7 +2245,7 @@
           What this is, and is not.
         </h3>
         <p>
-          Two things this is not. Not a production agent — the workstation runs dev (and occasionally staging) loops, no prod IAM, no customer data. AWS spend is capped by the per-loop budget. Fail-safes are a daily restart cron, a billing alarm that pings me, and a kill switch in a secondary tmux pane. I can shut the loop down from anywhere in under a minute.
+          Two things this is not. Not a production agent. The workstation runs dev (and occasionally staging) loops, no prod IAM, no customer data. AWS spend is capped by the per-loop budget. Fail-safes are a daily restart cron, a billing alarm that pings me, and a kill switch in a secondary tmux pane. I can shut the loop down from anywhere in under a minute.
         </p>
         <p>
           Also not a recommendation that every team needs a Mac in a closet. The form factor is incidental. What matters: somewhere to run, something to run in, a way to reach it from anywhere. Cloud VM works. Linux box in a rack works. Mac in a home office works. Copy the architecture, not the silicon.
@@ -2258,7 +2258,7 @@
 
       <!-- ===== Section 11 — REFLECTION ===== -->
       <section class="sec" id="deeper">
-        <span class="sec__num">§ 11 — Reflection</span>
+        <span class="sec__num">§ 11 · Reflection</span>
         <h2 class="sec__head">The deeper <em>resemblance</em>.</h2>
 
         <p>
@@ -2357,20 +2357,20 @@
             <text x="600" y="389" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#a3501a" letter-spacing="2">≡ RECONSTRUCTABLE MEMORY</text>
 
             <!-- Footer note -->
-            <text x="600" y="464" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#5a5040" letter-spacing="2">SAME SHAPE — DIFFERENT SUBSTRATE</text>
+            <text x="600" y="464" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#5a5040" letter-spacing="2">SAME SHAPE · DIFFERENT SUBSTRATE</text>
           </svg>
         </div>
 
         <p>
-          The Lead is governance — stops anything, writes any policy, but doesn't reach into the Generator's work. The Generator is the agent runtime — stateless, disposable, focused, reset between tasks. The Validator is audit and policy — append-only verdicts, evidence-bearing, fail-closed. Plan, manifest, and history files are the institutional memory; every iteration is reconstructable from disk.
+          The Lead is governance: stops anything, writes any policy, but doesn't reach into the Generator's work. The Generator is the agent runtime: stateless, disposable, focused, reset between tasks. The Validator is audit and policy: append-only verdicts, evidence-bearing, fail-closed. Plan, manifest, and history files are the institutional memory; every iteration is reconstructable from disk.
         </p>
 
         <p>
-          We build Nexentra with the same shape Nexentra exposes to its customers. The symmetry isn't aesthetic — it's how a small team ships an institutional-grade platform. Trust the discipline of the loop more than the talent of any one agent in it.
+          We build Nexentra with the same shape Nexentra exposes to its customers. The symmetry isn't aesthetic; it's how a small team ships an institutional-grade platform. Trust the discipline of the loop more than the talent of any one agent in it.
         </p>
 
         <p>
-          That's the shift. The agents we used to treat as productivity tools are, on the other side of this loop, software engineers. They plan, build, critique, re-plan. They run on a remote box over Tailscale while their architect is in the car. The humans aren't faster typists with a smarter assistant — they're architects, free to decide what should exist while the factory hums.
+          That's the shift. The agents we used to treat as productivity tools are, on the other side of this loop, software engineers. They plan, build, critique, re-plan. They run on a remote box over Tailscale while their architect is in the car. The humans aren't faster typists with a smarter assistant; they're architects, free to decide what should exist while the factory hums.
         </p>
       </section>
 
@@ -2396,11 +2396,11 @@
       </div>
       <div class="rail-item">
         <b>Adjacent reading</b>
-        ADR-0064 — Devil's Advocate<br/>
-        ADR-0065 — Chat-first model<br/>
-        ADR-0066 — Agent-first / REST<br/>
-        Spec 05 — Agent Runtime<br/>
-        Spec 09 — Audit & Compliance
+        ADR-0064 · Devil's Advocate<br/>
+        ADR-0065 · Chat-first model<br/>
+        ADR-0066 · Agent-first / REST<br/>
+        Spec 05 · Agent Runtime<br/>
+        Spec 09 · Audit & Compliance
       </div>
     </aside>
 
@@ -2413,14 +2413,14 @@
       <p>
         Typography: Instrument Serif &amp; Newsreader for prose; JetBrains Mono
         for technical labels. Schematics hand-authored in SVG. The grain
-        overlay is a fractal-noise filter, not an image — it scales with
+        overlay is a fractal-noise filter, not an image; it scales with
         the viewport. Designed for slow reading.
       </p>
     </div>
     <div>
       <b>Imprint</b>
       <p>
-        Nexentra — the institutional identity, memory, and governance layer
+        Nexentra · the institutional identity, memory, and governance layer
         that turns generic AI into trusted financial agents.
         <br/><br/>
         © 2026 RTA Labs · Houston, TX<br/>
